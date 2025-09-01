@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Python Quiz</title>
+    <!-- Library Imports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        /* --- Themes --- */
+        :root {
+            --bg-color: #f0f4f8;
+            --main-color: #ffffff;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --correct-color: #22c55e;
+            --incorrect-color: #ef4444;
+            --border-color: #e5e7eb;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --btn-bg: #f9fafb;
+            --btn-border: #d1d5db;
+            --explanation-bg: #eef2ff;
+        }
+
+        body.dark-mode {
+            --bg-color: #111827;
+            --main-color: #1f2937;
+            --primary-color: #3b82f6;
+            --primary-hover: #60a5fa;
+            --text-color: #f9fafb;
+            --light-text: #9ca3af;
+            --correct-color: #4ade80;
+            --incorrect-color: #f87171;
+            --border-color: #374151;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --btn-bg: #374151;
+            --btn-border: #4b5563;
+            --explanation-bg: #2b394f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            background-color: var(--main-color);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px var(--shadow-color);
+            width: 100%;
+            max-width: 750px;
+            margin-top: 50px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--light-text);
+            transition: color 0.3s ease;
+            z-index: 100;
+        }
+
+        .theme-switcher:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- Welcome Screen --- */
+        #welcome-container {
+            padding: 40px;
+            text-align: center;
+        }
+
+        #name-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        #name-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        /* --- Topic Selection & Progress Screen --- */
+        #topic-container h1,
+        #progress-container h1,
+        #welcome-container h1 {
+            text-align: center;
+            padding: 20px 20px 10px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            background: -webkit-linear-gradient(45deg, var(--primary-color), var(--primary-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #topic-container p,
+        #progress-container p,
+        #welcome-container p {
+            text-align: center;
+            color: var(--light-text);
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .topic-header-controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 0 30px 30px;
+        }
+
+        .topic-btn,
+        .nav-btn {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--main-color);
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .topic-btn:hover,
+        .nav-btn:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Quiz Screen --- */
+        .quiz-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #quiz-timer {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        #question-counter {
+            font-size: 1rem;
+            color: var(--light-text);
+            font-weight: 500;
+        }
+
+        #question {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 10px;
+            line-height: 1.5;
+            padding: 0 30px;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--border-color);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            color: var(--incorrect-color);
+        }
+
+        #answer-buttons {
+            padding: 30px;
+            display: grid;
+            gap: 15px;
+        }
+
+        .btn {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--btn-bg);
+            border: 2px solid var(--btn-border);
+            color: var(--text-color);
+            padding: 18px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: var(--main-color);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn.correct {
+            background-color: var(--correct-color);
+            color: #fff;
+            border-color: var(--correct-color);
+            font-weight: 600;
+        }
+
+        .btn.incorrect {
+            background-color: var(--incorrect-color);
+            color: #fff;
+            border-color: var(--incorrect-color);
+            font-weight: 600;
+        }
+
+        #explanation-box {
+            background-color: var(--explanation-bg);
+            margin: 0 30px 20px;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-color);
+            animation: fadeIn 0.5s ease;
+        }
+
+        #explanation-box h4 {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background-image: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            flex-grow: 1;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px var(--shadow-color);
+        }
+
+        .nav-control-btn {
+            background-image: none;
+            background-color: var(--light-text);
+        }
+
+        .nav-control-btn:hover {
+            background-color: #7d8590;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .progress-container {
+            padding: 25px 30px 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        #progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.4s ease-in-out;
+        }
+
+        /* --- Report & Progress Styles --- */
+        #report-container,
+        #progress-container {
+            padding: 40px;
+        }
+
+        #score-summary {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        #topic-result {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            color: var(--light-text);
+        }
+
+        #question-review .review-item {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #question-review .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .review-answer {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .review-answer::before {
+            content: '';
+            min-width: 22px;
+            min-height: 22px;
+            margin-right: 15px;
+            border-radius: 50%;
+            font-size: 1rem;
+        }
+
+        .review-answer.user-incorrect {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--incorrect-color);
+            color: var(--incorrect-color);
+        }
+
+        .review-answer.user-incorrect::before {
+            content: '✗';
+            background-color: var(--incorrect-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .review-answer.correct-answer {
+            background-color: rgba(34, 197, 94, 0.1);
+            border-left: 4px solid var(--correct-color);
+            color: var(--correct-color);
+        }
+
+        .review-answer.correct-answer::before {
+            content: '✓';
+            background-color: var(--correct-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        #progress-chart-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+                align-items: normal;
+            }
+
+            .container {
+                margin-top: 20px;
+                border-radius: 15px;
+            }
+
+            #topic-container h1,
+            #progress-container h1,
+            #welcome-container h1 {
+                font-size: 1.5rem;
+            }
+
+            #topic-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 0 15px 15px;
+            }
+
+            .topic-btn,
+            .nav-btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-btn {
+                width: 100%;
+            }
+
+            #question {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+
+            #report-container,
+            #progress-container,
+            #welcome-container {
+                padding: 20px;
+            }
+
+            .theme-switcher {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="theme-switcher" id="theme-toggle">🌙</div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcome-container">
+            <h1>Python Skills Challenge</h1>
+            <p>Please enter your name to begin.</p>
+            <input type="text" id="name-input" placeholder="Enter your name..." autocomplete="name">
+            <button id="start-btn" class="control-btn">Start Quiz</button>
+        </div>
+
+        <!-- Topic Selection Screen -->
+        <div id="topic-container" class="hide">
+            <h1 id="topic-welcome-header">Welcome!</h1>
+            <p>Select a topic to test your knowledge or view your progress.</p>
+            <div class="topic-header-controls">
+                <button id="progress-btn" class="nav-btn">My Progress</button>
+            </div>
+            <div id="topic-grid"></div>
+        </div>
+
+        <!-- Progress Screen -->
+        <div id="progress-container" class="hide">
+            <h1>Your Progress</h1>
+            <p>Review your quiz history and performance over time.</p>
+            <div id="progress-chart-container">
+                <canvas id="progress-chart"></canvas>
+            </div>
+            <div class="controls">
+                <button id="back-to-topics-from-progress" class="control-btn nav-control-btn">Back to Topics</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-container" class="hide">
+            <div class="quiz-header">
+                <div id="question-counter"></div>
+                <div id="quiz-timer">05:00</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress-bar-fill"></div>
+                </div>
+            </div>
+            <h2 id="question">Question text goes here</h2>
+            <div id="answer-buttons"></div>
+            <div id="explanation-container"></div>
+            <div class="controls">
+                <button id="back-btn" class="control-btn nav-control-btn">Topics</button>
+                <button id="next-btn" class="control-btn hide">Next</button>
+            </div>
+        </div>
+
+        <!-- Report Screen -->
+        <div id="report-container" class="hide">
+            <h2 id="score-summary"></h2>
+            <p id="topic-result"></p>
+            <div id="question-review"></div>
+            <div class="controls">
+                <button id="back-to-topics-btn" class="control-btn nav-control-btn">Topics</button>
+                <button id="restart-btn" class="control-btn">Restart</button>
+                <button id="pdf-btn" class="control-btn">Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = {
+            "Variables": [
+                { question: "What is the correct way to assign the value `10` to a variable named `x`?", answers: [{ text: "`x <- 10`" }, { text: "`let x = 10`" }, { text: "`x = 10`", correct: true }, { text: "`10 = x`" }], explanation: "`x = 10` is the correct syntax. The variable name is on the left, followed by the assignment operator `=`, and then the value." },
+                { question: "Which is a valid variable name in Python?", answers: [{ text: "`2my_var`" }, { text: "`my-var`" }, { text: "`_my_var`", correct: true }, { text: "`my var`" }], explanation: "Variable names can start with a letter or an underscore (`_`), but not a number. They cannot contain hyphens or spaces." },
+                { question: "What is the output of `a = 5; A = 10; print(a)`?", answers: [{ text: "`10`" }, { text: "`5`", correct: true }, { text: "`15`" }, { text: "An error" }], explanation: "Python variable names are case-sensitive, so `a` and `A` are two different variables. The code prints the value of the lowercase `a`, which is 5." },
+                { question: "How do you assign multiple values to multiple variables in one line?", answers: [{ text: "`x, y, z = 1, 2, \"hello\"`", correct: true }, { text: "`x=1; y=2; z=\"hello\"`" }, { text: "`x=y=z=1, 2, \"hello\"`" }, { text: "It's not possible" }], explanation: "Python allows multiple assignment by matching the number of variables on the left to the number of values on the right, separated by commas." },
+                { question: "What is the output of `x = y = z = \"Orange\"; print(x)`?", answers: [{ text: "`Orange`", correct: true }, { text: "`(\"Orange\", \"Orange\", \"Orange\")`" }, { text: "An error" }, { text: "`x`" }], explanation: "You can assign the same value to multiple variables in one line. Here, `x`, `y`, and `z` all refer to the string \"Orange\"." },
+                { question: "What is 'unpacking' a collection?", answers: [{ text: "Deleting all elements" }, { text: "Extracting values into variables", correct: true }, { text: "Zipping two lists" }, { text: "Creating a global variable" }], explanation: "Unpacking is the process of extracting values from an iterable (like a list or tuple) and assigning them to a sequence of variables." },
+                { question: "Which keyword allows modification of a variable outside the current function's scope?", answers: [{ text: "`global`", correct: true }, { text: "`nonlocal`" }, { text: "`public`" }, { text: "`var`" }], explanation: "The `global` keyword is used to indicate that a variable being modified inside a function is the one from the global scope, not a new local one." },
+                { question: "Code: `x = \"awesome\"; def myfunc(): x = \"fantastic\"; myfunc(); print(\"Python is \" + x)`", answers: [{ text: "`Python is fantastic`" }, { text: "`Python is awesome`", correct: true }, { text: "An error" }, { text: "`Python is `" }], explanation: "The `x` inside `myfunc` is a local variable. Modifying it does not affect the global variable `x`. The print statement uses the global `x`." },
+                { question: "Code: `x = \"awesome\"; def myfunc(): global x; x = \"fantastic\"; myfunc(); print(\"Python is \" + x)`", answers: [{ text: "`Python is fantastic`", correct: true }, { text: "`Python is awesome`" }, { text: "An error" }, { text: "`Python is `" }], explanation: "Because `global x` is used, the function modifies the global variable `x`. So, its value changes to \"fantastic\" everywhere." },
+                { question: "Which is NOT a legal variable name?", answers: [{ text: "`my_variable`" }, { text: "`MyVariable`" }, { text: "`_my_variable`" }, { text: "`my-variable`", correct: true }], explanation: "Variable names cannot contain hyphens (`-`) as this character is reserved for the subtraction operator." },
+                { question: "What happens if you use a variable before assigning it a value?", answers: [{ text: "It defaults to `None`" }, { text: "It defaults to `0`" }, { text: "It raises a `NameError`", correct: true }, { text: "It raises a `ValueError`" }], explanation: "Python requires variables to be assigned a value before they can be accessed. Attempting to use an unassigned variable results in a `NameError`." },
+                { question: "What is the PEP 8 convention for multi-word variable names?", answers: [{ text: "camelCase" }, { text: "PascalCase" }, { text: "snake_case", correct: true }, { text: "kebab-case" }], explanation: "PEP 8, Python's style guide, recommends using `snake_case` (all lowercase with underscores) for variables and function names." },
+                { question: "How can you print the data type of a variable `x`?", answers: [{ text: "`print(typeOf(x))`" }, { text: "`print(x.type)`" }, { text: "`print(type(x))`", correct: true }, { text: "`print(typeof(x))`" }], explanation: "The built-in `type()` function is used to get the type of an object. For example, `type(5)` returns `<class 'int'>`." },
+                { question: "What is the output of: `x = 5; x = \"John\"; print(x)`?", answers: [{ text: "`5`" }, { text: "An error" }, { text: "`John`", correct: true }, { text: "`5John`" }], explanation: "Python is dynamically typed, meaning you can change the type of data a variable holds. The last assignment to `x` was the string \"John\"." },
+                { question: "What is the best description of a variable in Python?", answers: [{ text: "A container for storing data values", correct: true }, { text: "A fixed value" }, { text: "A function that returns a value" }, { text: "A fixed location in memory" }], explanation: "Variables act as labels or names that refer to objects (data values) stored in memory. They are not the containers themselves but references to the data." },
+                { question: "To what value is a variable set if it's created but not assigned?", answers: [{ text: "`0`" }, { text: "`None`" }, { text: "`False`" }, { text: "This causes an error", correct: true }], explanation: "Unlike some languages, Python does not have a default value for unassigned variables. You must assign a value when or before you use it, otherwise a `NameError` is raised." },
+                { question: "What does the line `x, y = y, x` do?", answers: [{ text: "Creates a copy of x and y" }, { text: "Checks if x and y are equal" }, { text: "Swaps the values of x and y", correct: true }, { text: "Assigns y to x" }], explanation: "This is a Pythonic way to swap the values of two variables without needing a temporary variable. It leverages tuple packing and unpacking." },
+                { question: "Can a Python keyword (like `for` or `if`) be used as a variable name?", answers: [{ text: "Yes, if capitalized" }, { text: "No, it will cause a `SyntaxError`", correct: true }, { text: "Yes, but it's bad practice" }, { text: "Only inside a function" }], explanation: "Keywords are reserved words that have special meaning in Python's syntax. You cannot use them as identifiers (variable names, function names, etc.)." },
+                { question: "What is the scope of a variable assigned inside a function?", answers: [{ text: "Global" }, { text: "Local to the function", correct: true }, { text: "Static" }, { text: "Public" }], explanation: "By default, any variable that is assigned a value inside a function is local to that function and only exists while the function is executing." },
+                { question: "How do you delete a variable?", answers: [{ text: "`delete x`" }, { text: "`remove(x)`" }, { text: "`x = None`" }, { text: "`del x`", correct: true }], explanation: "The `del` keyword is used to remove a variable and its binding from the local or global namespace. Assigning `None` just changes its value." }
+            ],
+            "Data Types": [
+                { question: "What is the data type of `x = 5`?", answers: [{ text: "`str`" }, { text: "`int`", correct: true }, { text: "`float`" }, { text: "`list`" }], explanation: "`5` is a whole number, so its type is an integer or `int`." },
+                { question: "Which data type is an ordered, immutable sequence?", answers: [{ text: "`list`" }, { text: "`dict`" }, { text: "`set`" }, { text: "`tuple`", correct: true }], explanation: "Tuples are like lists, but they are immutable, meaning their contents cannot be changed after creation. They are defined with parentheses `()`." },
+                { question: "What is the data type of `x = {\"name\": \"John\"}`?", answers: [{ text: "`dict`", correct: true }, { text: "`list`" }, { text: "`set`" }, { text: "`tuple`" }], explanation: "Curly braces `{}` with key-value pairs create a dictionary, or `dict`." },
+                { question: "What is the result of `type(True)`?", answers: [{ text: "`boolean`" }, { text: "`int`" }, { text: "`bool`", correct: true }, { text: "`str`" }], explanation: "`True` and `False` are boolean values, and their type is `bool`." },
+                { question: "Which data type stores a collection of unique items with no specific order?", answers: [{ text: "`list`" }, { text: "`tuple`" }, { text: "`set`", correct: true }, { text: "`dict`" }], explanation: "Sets are unordered collections of unique elements. Duplicates are automatically removed." },
+                { question: "What is the data type of `x = 1j`?", answers: [{ text: "`int`" }, { text: "`float`" }, { text: "`complex`", correct: true }, { text: "An error" }], explanation: "A number followed by `j` is the syntax for creating an imaginary number, which is part of the `complex` data type." },
+                { question: "Which of these is a mutable data type?", answers: [{ text: "`int`" }, { text: "`str`" }, { text: "`tuple`" }, { text: "`list`", correct: true }], explanation: "Mutable means the object can be changed after it is created. You can add, remove, or change elements in a list." },
+                { question: "Which function converts an integer to a string?", answers: [{ text: "`string()`" }, { text: "`str()`", correct: true }, { text: "`convert.str()`" }, { text: "`to_string()`" }], explanation: "The `str()` constructor function is used to convert other data types, like integers or floats, into strings." },
+                { question: "The data type `bytes` is...", answers: [{ text: "Mutable" }, { text: "Unicode characters" }, { text: "Immutable sequence of integers (0-255)", correct: true }, { text: "Contains text" }], explanation: "`bytes` objects are immutable sequences of single bytes, often used for binary data." },
+                { question: "What is the data type of `x = range(6)`?", answers: [{ text: "`list`" }, { text: "`range`", correct: true }, { text: "`tuple`" }, { text: "`generator`" }], explanation: "`range()` creates an immutable sequence of numbers. While it's iterable, it's a distinct `range` type, not a list." },
+                { question: "What is the data type of `None`?", answers: [{ text: "`NoneType`", correct: true }, { text: "`null`" }, { text: "`object`" }, { text: "`undefined`" }], explanation: "`None` is a special constant that represents the absence of a value. Its type is `NoneType`." },
+                { question: "If `x = b\"Hello\"`, what is `type(x)`?", answers: [{ text: "`str`" }, { text: "`bytearray`" }, { text: "`bytes`", correct: true }, { text: "`memoryview`" }], explanation: "The `b` prefix before a string literal creates a `bytes` object, which stores raw bytes instead of Unicode text." },
+                { question: "Which of the following creates a `frozenset`?", answers: [{ text: "`set([], frozen=True)`" }, { text: "`frozenset([1, 2, 3])`", correct: true }, { text: "`[1, 2, 3].frozen()`" }, { text: "`{1, 2, 3, frozen}`" }], explanation: "`frozenset` is an immutable version of a set. It is created using the `frozenset()` constructor." },
+                { question: "What will `bool(0)` evaluate to?", answers: [{ text: "`True`" }, { text: "`False`", correct: true }, { text: "`None`" }, { text: "An error" }], explanation: "In a boolean context, `0`, empty collections (`[]`, `()`, `{}`), `None`, and empty strings `\"\"` are considered `False`." },
+                { question: "What is the data type of the result of `5 / 2`?", answers: [{ text: "`int`" }, { text: "`float`", correct: true }, { text: "`complex`" }, { text: "`double`" }], explanation: "In Python 3, the standard division operator `/` always results in a `float`, even if the numbers divide evenly." },
+                { question: "Which constructor creates a list?", answers: [{ text: "`list()`", correct: true }, { text: "`List()`" }, { text: "`new list`" }, { text: "`array()`" }], explanation: "The `list()` constructor can be used to create a new list. It can be empty (`list()`) or take an iterable as an argument (`list('abc')`)." },
+                { question: "What type is created by `('apple',)`?", answers: [{ text: "`str`" }, { text: "`list`" }, { text: "`tuple`", correct: true }, { text: "An error" }], explanation: "This creates a tuple with a single element. The trailing comma is essential to distinguish it from just parentheses around a string." },
+                { question: "What does `float('inf')` represent?", answers: [{ text: "A very large number" }, { text: "Infinity", correct: true }, { text: "A syntax error" }, { text: "The string 'inf'" }], explanation: "Python's `float` type can represent positive and negative infinity, which is useful in mathematical calculations." },
+                { question: "What is a key difference between a list and a tuple?", answers: [{ text: "Lists are ordered, tuples are not." }, { text: "Lists can be changed (mutable), tuples cannot (immutable).", correct: true }, { text: "Lists use `[]`, tuples use `{}`." }, { text: "Lists can only hold numbers." }], explanation: "The most fundamental difference is mutability. Lists can be modified after creation, whereas tuples cannot be." },
+                { question: "What is the data type of the keys in a dictionary?", answers: [{ text: "Only strings" }, { text: "Only integers" }, { text: "Any mutable type" }, { text: "Any immutable type", correct: true }], explanation: "Dictionary keys must be of an immutable type, like strings, numbers, or tuples. This is because the key's hash value must be constant." }
+            ],
+            "Lists": [
+                { question: "How do you create an empty list?", answers: [{ text: "`list = []`", correct: true }, { text: "`list = ()`" }, { text: "`list = {}`" }, { text: "`list = new List()`" }], explanation: "An empty list is created using square brackets `[]`." },
+                { question: "Given `my_list = [1,2,3,4,5]`, what does `my_list[1:3]` return?", answers: [{ text: "`[1, 2, 3]`" }, { text: "`[2, 3]`", correct: true }, { text: "`[2, 3, 4]`" }, { text: "`[1, 2]`" }], explanation: "Slicing extracts a part of the list. The start index (1) is inclusive, and the end index (3) is exclusive." },
+                { question: "Which method adds an element to the end of a list?", answers: [{ text: "`add()`" }, { text: "`push()`" }, { text: "`append()`", correct: true }, { text: "`insert()`" }], explanation: "The `.append()` method is used to add a single item to the end of the list." },
+                { question: "How to change the second item in `fruits` to `\"orange\"`?", answers: [{ text: "`fruits[2] = \"orange\"`" }, { text: "`fruits.change(1, \"orange\")`" }, { text: "`fruits[1] = \"orange\"`", correct: true }, { text: "`fruits.set(1, \"orange\")`" }], explanation: "You can change an item by accessing its index and assigning a new value. The second item is at index 1." },
+                { question: "Which method removes and returns the last item from a list?", answers: [{ text: "`remove()`" }, { text: "`pop()`", correct: true }, { text: "`delete()`" }, { text: "`discard()`" }], explanation: "`.pop()` removes and returns the item at a given index. If no index is specified, it removes and returns the last item." },
+                { question: "What is the output of `len([1, [2, 3], 4])`?", answers: [{ text: "`3`", correct: true }, { text: "`4`" }, { text: "`2`" }, { text: "An error" }], explanation: "`len()` counts the top-level elements in the list. The nested list `[2, 3]` is counted as one single element." },
+                { question: "Which method returns the index of the first occurrence of an element?", answers: [{ text: "`.find()`" }, { text: "`.search()`" }, { text: "`.index()`", correct: true }, { text: "`.position()`" }], explanation: "The `.index()` method searches for an element and returns its index. It raises a `ValueError` if the element is not found." },
+                { question: "What does the `sort()` method do to a list?", answers: [{ text: "Returns a new sorted list" }, { text: "Sorts the list in-place", correct: true }, { text: "Reverses the list" }, { text: "Checks if sorted" }], explanation: "The `.sort()` method modifies the list directly (in-place) to sort its elements. It does not return a new list." },
+                { question: "Which method creates a shallow copy of a list?", answers: [{ text: "`list()` constructor" }, { text: "`.copy()` method", correct: true }, { text: "`=` operator" }, { text: "`.duplicate()` method" }], explanation: "The `.copy()` method creates a new list object with the same elements. The `=` operator only creates a new reference to the same list." },
+                { question: "Code: `a = [1, 2]; b = a; b[0] = 5; print(a)`", answers: [{ text: "`[1, 2]`" }, { text: "`[5, 2]`", correct: true }, { text: "`[1, 5]`" }, { text: "An error" }], explanation: "`b = a` makes `b` refer to the *same* list as `a`. Therefore, modifying `b` also modifies `a`." },
+                { question: "Which method adds all items of an iterable to the end of a list?", answers: [{ text: "`append()`" }, { text: "`merge()`" }, { text: "`extend()`", correct: true }, { text: "`concat()`" }], explanation: "`.extend()` iterates over its argument and adds each element to the list, extending the list. `.append()` would add the iterable as a single element." },
+                { question: "What is the output of `[1, 2, 3] + [4, 5]`?", answers: [{ text: "`[[1,2,3], [4,5]]`" }, { text: "`[1, 2, 3, 4, 5]`", correct: true }, { text: "`[5, 7]`" }, { text: "An error" }], explanation: "The `+` operator concatenates lists, creating a new list containing all elements from both operands." },
+                { question: "How do you remove the first occurrence of `5` from a list `nums`?", answers: [{ text: "`nums.pop(5)`" }, { text: "`del nums[5]`" }, { text: "`nums.remove(5)`", correct: true }, { text: "`nums.discard(5)`" }], explanation: "`.remove()` searches for the first item with the specified value and removes it. `del nums[5]` would remove the item at index 5." },
+                { question: "What does `my_list.clear()` do?", answers: [{ text: "Deletes the variable" }, { text: "Removes all elements", correct: true }, { text: "Returns a copy" }, { text: "Creates an empty list" }], explanation: "The `.clear()` method removes all of the items from a list, making it empty. The list object itself still exists." },
+                { question: "What does `my_list[-1]` access?", answers: [{ text: "The first element" }, { text: "The second element" }, { text: "The last element", correct: true }, { text: "An error" }], explanation: "Negative indexing in Python starts from the end of the sequence. `-1` refers to the last element, `-2` to the second to last, and so on." },
+                { question: "How do you insert the number `99` at index `1` in a list `L`?", answers: [{ text: "`L.add(1, 99)`" }, { text: "`L.insert(1, 99)`", correct: true }, { text: "`L[1].insert(99)`" }, { text: "`L[1] = 99`" }], explanation: "The `.insert()` method takes two arguments: the index where the element should be inserted, and the element itself. `L[1] = 99` would replace the existing element." },
+                { question: "What does `my_list.reverse()` do?", answers: [{ text: "Returns a reversed copy" }, { text: "Sorts in descending order" }, { text: "Reverses the list in-place", correct: true }, { text: "Checks if reversed" }], explanation: "The `.reverse()` method reverses the order of elements in the list in-place, meaning it modifies the original list and returns `None`." },
+                { question: "How can you count the number of times `5` appears in a list `L`?", answers: [{ text: "`L.count(5)`", correct: true }, { text: "`count(L, 5)`" }, { text: "`L.find(5)`" }, { text: "`len(L, 5)`" }], explanation: "The `.count()` method returns the number of occurrences of a specified element in the list." },
+                { question: "What is list comprehension?", answers: [{ text: "A way to understand lists" }, { text: "A concise way to create lists", correct: true }, { text: "A method to sort lists" }, { text: "A way to join lists" }], explanation: "List comprehension offers a shorter, more readable syntax for creating a new list based on the values of an existing iterable. e.g., `[x*x for x in range(5)]`." },
+                { question: "What is the result of `['a', 'b'] * 3`?", answers: [{ text: "An error" }, { text: "`['a', 'b', 'a', 'b', 'a', 'b']`", correct: true }, { text: "`['aaa', 'bbb']`" }, { text: "`['a3', 'b3']`" }], explanation: "The `*` operator, when used with a list and an integer, performs repetition, creating a new list with the original's elements repeated." }
+            ],
+            "Dictionaries": [
+                { question: "How do you create an empty dictionary?", answers: [{ text: "`d = []`" }, { text: "`d = {}`", correct: true }, { text: "`d = ()`" }, { text: "`d = dict.empty()`" }], explanation: "An empty dictionary is created with a pair of curly braces `{}`." },
+                { question: "How do you access the value for key `'name'` in a dictionary `d`?", answers: [{ text: "`d('name')`" }, { text: "`d.value('name')`" }, { text: "`d['name']`", correct: true }, { text: "`d.fetch('name')`" }], explanation: "The standard way to access a value is using square bracket notation with the key, like `d['key']`." },
+                { question: "What happens if you access a non-existent key with `d['key']`?", answers: [{ text: "Returns `None`" }, { text: "Returns `False`" }, { text: "Raises a `KeyError`", correct: true }, { text: "Adds the key" }], explanation: "Accessing a key that is not in the dictionary using square brackets will raise a `KeyError`." },
+                { question: "Which method returns a default value if a key is not found?", answers: [{ text: "`get()`", correct: true }, { text: "`fetch()`" }, { text: "`find()`" }, { text: "`access()`" }], explanation: "The `.get()` method is a safer way to access keys. `d.get('key', 'default_value')` will return the default value instead of raising an error." },
+                { question: "How do you add or update a key-value pair `'color': 'blue'` in `d`?", answers: [{ text: "`d.add('color', 'blue')`" }, { text: "`d['color'] = 'blue'`", correct: true }, { text: "`d.append('color': 'blue')`" }, { text: "It can't be updated" }], explanation: "Assigning a value to a key with `d['key'] = value` will add the key-value pair if the key doesn't exist, or update the value if it does." },
+                { question: "Which method returns a view of all keys in a dictionary?", answers: [{ text: "`get_keys()`" }, { text: "`keys()`", correct: true }, { text: "`list_keys()`" }, { text: "`key_view()`" }], explanation: "The `.keys()` method returns a view object that displays a list of all the keys in the dictionary." },
+                { question: "Which method removes and returns a key-value pair?", answers: [{ text: "`remove()`" }, { text: "`delete()`" }, { text: "`pop()`", correct: true }, { text: "`discard()`" }], explanation: "The `.pop()` method removes the specified key and returns the corresponding value. If the key is not found, it raises a `KeyError` unless a default is given." },
+                { question: "What does the `.items()` method return?", answers: [{ text: "A view of (key, value) pairs", correct: true }, { text: "A list of keys" }, { text: "A list of values" }, { text: "The number of items" }], explanation: "The `.items()` method returns a view object containing tuple pairs of (key, value) for each item in the dictionary." },
+                { question: "How do you find the number of pairs in a dictionary `d`?", answers: [{ text: "`d.size()`" }, { text: "`d.count()`" }, { text: "`len(d)`", correct: true }, { text: "`d.length()`" }], explanation: "The built-in `len()` function, when used on a dictionary, returns the number of key-value pairs it contains." },
+                { question: "After `d.update({'b': 2})`, what is `d` if it was `{'a': 1}`?", answers: [{ text: "`{'b': 2}`" }, { text: "`{'a': 1, 'b': 2}`", correct: true }, { text: "`{'a': 1}`" }, { text: "An error" }], explanation: "The `.update()` method merges another dictionary. It adds new key-value pairs and updates existing keys." },
+                { question: "Can a list be used as a dictionary key?", answers: [{ text: "Yes, always" }, { text: "No, because lists are mutable", correct: true }, { text: "Only if empty" }, { text: "Only if it contains strings" }], explanation: "Dictionary keys must be immutable. Since lists can be changed, they cannot be used as keys." },
+                { question: "Which of the following can be a dictionary key?", answers: [{ text: "A list" }, { text: "A dictionary" }, { text: "A set" }, { text: "A tuple", correct: true }], explanation: "Tuples are immutable, so they are valid dictionary keys. Lists, sets, and other dictionaries are mutable and cannot be used." },
+                { question: "How do you remove all items from a dictionary `d`?", answers: [{ text: "`d.delete_all()`" }, { text: "`d.clear()`", correct: true }, { text: "`del d`" }, { text: "`d = {}`" }], explanation: "The `.clear()` method removes all key-value pairs from the dictionary, leaving it empty. `del d` deletes the variable itself." },
+                { question: "What does `d.popitem()` do in Python 3.7+?", answers: [{ text: "Removes a random item" }, { text: "Removes the first item" }, { text: "Removes the last inserted item", correct: true }, { text: "Removes the smallest item" }], explanation: "In Python 3.7 and later, dictionaries preserve insertion order, and `.popitem()` removes and returns the last added (LIFO) key-value pair." },
+                { question: "How can you check if a key `'name'` exists in a dictionary `d`?", answers: [{ text: "`'name' in d`", correct: true }, { text: "`d.exists('name')`" }, { text: "`d.has_key('name')`" }, { text: "`d['name'] != None`" }], explanation: "The most Pythonic way to check for a key's existence is using the `in` keyword, which is fast and readable." },
+                { question: "What does the `.values()` method return?", answers: [{ text: "A tuple of values" }, { text: "A view object of the values", correct: true }, { text: "A list of values" }, { text: "A generator of values" }], explanation: "The `.values()` method returns a view object that displays a list of all the values in the dictionary." },
+                { question: "How do you create a dictionary from a list of tuples?", answers: [{ text: "`dict([('a', 1), ('b', 2)])`", correct: true }, { text: "`dict(('a', 1), ('b', 2))`" }, { text: "`{('a', 1), ('b', 2)}`" }, { text: "It's not possible" }], explanation: "The `dict()` constructor can accept an iterable of key-value pairs (like a list of tuples) to create a new dictionary." },
+                { question: "What is the output of `len({'a': 1, 'b': 2, 'a': 3})`?", answers: [{ text: "`3`" }, { text: "`2`", correct: true }, { text: "An error" }, { text: "`1`" }], explanation: "Dictionary keys must be unique. When a key is repeated during creation, the last value assigned to it (`3` for key `'a'`) is kept. Thus, there are only two unique keys." },
+                { question: "What is the purpose of `d.setdefault('key', 'default')`?", answers: [{ text: "It always sets the key to the default value." }, { text: "It returns the key's value if it exists, otherwise it sets it and returns the default.", correct: true }, { text: "It raises an error if the key exists." }, { text: "It deletes the key if it exists." }], explanation: "`.setdefault()` is useful for initializing keys. It's like `.get()`, but it also inserts the key with the default value if the key is not already in the dictionary." },
+                { question: "What is dictionary comprehension?", answers: [{ text: "A method to read dictionaries." }, { text: "A compact way to process all items in a dictionary." }, { text: "A concise way to create dictionaries.", correct: true }, { text: "A way to combine dictionaries." }], explanation: "Similar to list comprehension, dictionary comprehension provides a short syntax for creating dictionaries. e.g., `{x: x**2 for x in (2, 4, 6)}`." }
+            ],
+            "Functions": [
+                { question: "How do you define a function in Python?", answers: [{ text: "`function my_func():`" }, { text: "`def my_func():`", correct: true }, { text: "`create my_func():`" }, { text: "`define my_func():`" }], explanation: "Functions are defined using the `def` keyword, followed by the function name and parentheses `()`." },
+                { question: "What keyword is used to return a value from a function?", answers: [{ text: "`yield`" }, { text: "`send`" }, { text: "`return`", correct: true }, { text: "`give`" }], explanation: "The `return` statement exits a function and optionally passes back a value to the caller." },
+                { question: "A function is defined as `def greet(name):`. How do you call it?", answers: [{ text: "`greet name=\"Alice\"`" }, { text: "`call greet(\"Alice\")`" }, { text: "`greet(\"Alice\")`", correct: true }, { text: "`greet.call(\"Alice\")`" }], explanation: "To call a function, you use its name followed by parentheses containing the arguments, like `greet(\"Alice\")`." },
+                { question: "What does a function with no `return` statement return?", answers: [{ text: "`0`" }, { text: "`None`", correct: true }, { text: "`True`" }, { text: "A syntax error" }], explanation: "If a function's execution completes without hitting a `return` statement, it implicitly returns `None`." },
+                { question: "What does `*args` in a function definition do?", answers: [{ text: "Pass keyword arguments" }, { text: "Pass a variable number of positional arguments", correct: true }, { text: "Require keyword arguments" }, { text: "Specify a generator" }], explanation: "`*args` collects any extra positional arguments into a tuple, allowing the function to accept any number of inputs." },
+                { question: "What does `**kwargs` in a function definition do?", answers: [{ text: "Pass a variable number of keyword arguments", correct: true }, { text: "Pass positional arguments" }, { text: "Specify the return type" }, { text: "Pass arguments by reference" }], explanation: "`**kwargs` collects any extra keyword arguments into a dictionary." },
+                { question: "What is a recursive function?", answers: [{ text: "A function inside another" }, { text: "A function that calls itself", correct: true }, { text: "A function with no return" }, { text: "A single-argument function" }], explanation: "A recursive function is one that solves a problem by calling itself with a smaller or simpler version of the same problem." },
+                { question: "In `def my_func(country=\"Norway\"):`, `country=\"Norway\"` is a...", answers: [{ text: "Required parameter" }, { text: "Keyword argument" }, { text: "Default parameter value", correct: true }, { text: "Type hint" }], explanation: "This sets a default value for the `country` parameter. If no argument is passed for `country` when the function is called, it will use \"Norway\"." },
+                { question: "What is a docstring in a Python function?", answers: [{ text: "A multi-line comment" }, { text: "A string literal for documentation", correct: true }, { text: "A variable with the function's name" }, { text: "A required first line" }], explanation: "A docstring is a string literal that occurs as the first statement in a module, function, or class. It is accessible via the `__doc__` attribute and is used by tools like `help()`." },
+                { question: "What does the `pass` statement do within a function?", answers: [{ text: "Stops the function" }, { text: "Acts as a placeholder; does nothing", correct: true }, { text: "Skips an iteration" }, { text: "Returns `None`" }], explanation: "`pass` is a null statement. It is used when a statement is syntactically required but you do not want any command or code to execute." },
+                { question: "What is the scope of a variable defined inside a function?", answers: [{ text: "Global" }, { text: "Built-in" }, { text: "Local", correct: true }, { text: "Nonlocal" }], explanation: "Variables created inside a function are in the local scope by default, meaning they are only accessible within that function." },
+                { question: "What is a lambda function?", answers: [{ text: "A multi-line, named function" }, { text: "A small anonymous function", correct: true }, { text: "A math-only function" }, { text: "A recursive function" }], explanation: "Lambda functions are small, single-expression anonymous functions. They are created with the `lambda` keyword and are often used for short, simple operations." },
+                { question: "What is the output? `def f(x): return x*2; print(f(3))`", answers: [{ text: "`3`" }, { text: "`6`", correct: true }, { text: "`f(3)`" }, { text: "An error" }], explanation: "The function `f` is called with the argument `3`. It calculates `3 * 2` and returns the result, `6`, which is then printed." },
+                { question: "How to call `def f(a,b,c):` with keyword arguments?", answers: [{ text: "`f(1, b=2, 3)`" }, { text: "`f(a=1, b=2, c=3)`", correct: true }, { text: "`f(1, 2, 3, a, b, c)`" }, { text: "`f({a:1, b:2, c:3})`" }], explanation: "Keyword arguments are passed using the `parameter_name=value` syntax. You can use them for all parameters to improve clarity." },
+                { question: "A variable defined outside all functions is known as a...", answers: [{ text: "Local variable" }, { text: "Static variable" }, { text: "Global variable", correct: true }, { text: "Private variable" }], explanation: "A variable defined in the main body of a script is in the global scope and is accessible throughout the script, including inside functions (unless shadowed by a local variable)." },
+                { question: "What does the `-> int` in `def f(x) -> int:` signify?", answers: [{ text: "The function must return `int`" }, { text: "A function annotation (type hint) for the return value", correct: true }, { text: "A syntax error" }, { text: "The function converts x to `int`" }], explanation: "This is a function annotation, commonly used as a type hint. It indicates that the function is expected to return an integer, but does not enforce it." },
+                { question: "Can a function be passed as an argument to another function?", answers: [{ text: "No, only variables" }, { text: "Yes, functions are first-class objects", correct: true }, { text: "Only lambda functions" }, { text: "Only built-in functions" }], explanation: "In Python, functions are treated like any other object (like numbers or strings). They can be assigned to variables, stored in collections, and passed as arguments." },
+                { question: "What is the term for a function defined inside another function?", answers: [{ text: "A sub-function" }, { text: "A nested function", correct: true }, { text: "A child function" }, { text: "An inner class" }], explanation: "A function defined inside another function is called a nested function. It has access to variables in the enclosing (outer) function's scope." },
+                { question: "What is the purpose of the `nonlocal` keyword?", answers: [{ text: "To declare a global variable" }, { text: "To work with variables in the enclosing scope of a nested function", correct: true }, { text: "To prevent a variable from being modified" }, { text: "To access variables from another module" }], explanation: "`nonlocal` is used in nested functions to indicate that a variable refers to a variable in the nearest enclosing scope that is not global." },
+                { question: "What must a function do to be considered a generator function?", answers: [{ text: "Return a list" }, { text: "Use the `generate` keyword" }, { text: "Use the `yield` keyword", correct: true }, { text: "Be defined with `def gen_...`" }], explanation: "A function becomes a generator function if it uses the `yield` keyword. Instead of returning once, it can yield a series of values, pausing and resuming its state between each." }
+            ],
+            "For Loops": [
+                { question: "Which statement is used to stop a loop prematurely?", answers: [{ text: "`pass`" }, { text: "`stop`" }, { text: "`break`", correct: true }, { text: "`exit`" }], explanation: "The `break` statement immediately terminates the innermost loop it is in." },
+                { question: "How do you loop through `fruits = [\"apple\", \"banana\"]`?", answers: [{ text: "`for x in fruits:`", correct: true }, { text: "`loop x in fruits:`" }, { text: "`foreach x in fruits:`" }, { text: "`for x of fruits:`" }], explanation: "The `for...in` construct is the standard way to iterate over the items of any sequence or iterable in Python." },
+                { question: "What is the output of `for x in \"word\": print(x)`?", answers: [{ text: "`word`" }, { text: "`w o r d` (on separate lines)", correct: true }, { text: "`['w', 'o', 'r', 'd']`" }, { text: "An error" }], explanation: "A `for` loop can iterate directly over a string. Each iteration will process one character of the string." },
+                { question: "What does `range(3)` generate?", answers: [{ text: "`1, 2, 3`" }, { text: "`0, 1, 2`", correct: true }, { text: "`0, 1, 2, 3`" }, { text: "`1, 2`" }], explanation: "`range(stop)` generates numbers from 0 up to (but not including) the `stop` value." },
+                { question: "Which statement skips the rest of the current iteration and continues with the next?", answers: [{ text: "`skip`" }, { text: "`continue`", correct: true }, { text: "`next`" }, { text: "`pass`" }], explanation: "The `continue` statement rejects all the remaining statements in the current iteration of the loop and moves the control back to the top of the loop." },
+                { question: "When does the `else` block in a `for` loop execute?", answers: [{ text: "When `break` is used" }, { text: "When the loop finishes normally", correct: true }, { text: "Always after the loop" }, { text: "If the loop condition is false" }], explanation: "The `else` clause executes after the loop completes its full sequence of iterations, but *not* if the loop is terminated by a `break` statement." },
+                { question: "How would you loop from 5 to 9 (inclusive)?", answers: [{ text: "`for i in range(5, 9):`" }, { text: "`for i in range(5, 10):`", correct: true }, { text: "`for i in range(4, 9):`" }, { text: "`for i in range(6, 10):`" }], explanation: "With `range(start, stop)`, the sequence goes up to but does not include `stop`. To include 9, the stop value must be 10." },
+                { question: "What is a nested loop?", answers: [{ text: "A loop that never ends" }, { text: "A loop inside another loop", correct: true }, { text: "A `for...else` loop" }, { text: "A special `while` loop" }], explanation: "A nested loop is a loop structure where one loop is placed inside the body of another. The inner loop executes fully for each iteration of the outer loop." },
+                { question: "What is the output? `for i in range(2): for j in range(2): print((i, j))`", answers: [{ text: "`(0,0)(1,1)`" }, { text: "`(0,0)(0,1)(1,0)(1,1)`", correct: true }, { text: "`(0,1)(0,2)(1,1)(1,2)`" }, { text: "`(0,0)(1,0)(0,1)(1,1)`" }], explanation: "The outer loop runs for i=0 and i=1. For each i, the inner loop runs for j=0 and j=1, printing the pair `(i, j)` each time." },
+                { question: "What does `pass` do in a `for` loop?", answers: [{ text: "Acts as a placeholder", correct: true }, { text: "Stops the loop" }, { text: "Skips the iteration" }, { text: "Is not allowed" }], explanation: "`pass` does nothing. It's used when a statement is syntactically required but no code needs to be executed, like in an empty loop body." },
+                { question: "How do you loop through both keys and values of a dictionary `d`?", answers: [{ text: "`for k, v in d.items():`", correct: true }, { text: "`for k, v in d:`" }, { text: "`for k in d: v = d[k]`" }, { text: "`for k, v in d.pairs():`" }], explanation: "The `.items()` method returns key-value pairs, which can be unpacked into two loop variables (e.g., `k, v`) for easy access." },
+                { question: "How can you get both the index and value while looping through a list?", answers: [{ text: "`for i, v in index(my_list):`" }, { text: "`for i, v in enumerate(my_list):`", correct: true }, { text: "`for i in range(len(my_list)):`" }, { text: "`for i, v in my_list.indexed():`" }], explanation: "The built-in `enumerate()` function adds a counter to an iterable. It returns pairs of (index, value)." },
+                { question: "What is the output of `for i in range(5, 0, -2): print(i)`?", answers: [{ text: "`5 3 1`", correct: true }, { text: "`5 4 3 2 1 0`" }, { text: "`5 3`" }, { text: "Infinite loop" }], explanation: "`range(start, stop, step)` with a negative step counts down. It starts at 5 and subtracts 2 until it would pass 0." },
+                { question: "What is the output? `for i in []: print('A') else: print('B')`", answers: [{ text: "It prints 'A'" }, { text: "It prints 'B'", correct: true }, { text: "It prints nothing" }, { text: "A syntax error" }], explanation: "The loop's sequence is empty, so it never runs. Because it completes without a `break`, the `else` clause is executed." },
+                { question: "What is the output? `for i in [1,2]: print('A'); break else: print('B')`", answers: [{ text: "It prints 'A' once", correct: true }, { text: "It prints 'A' and 'B'" }, { text: "It prints 'A' twice" }, { text: "It prints 'A' twice and 'B'" }], explanation: "The loop starts, prints 'A', and then the `break` statement terminates it. Because it was terminated by `break`, the `else` clause is skipped." },
+                { question: "How do you iterate over two lists simultaneously?", answers: [{ text: "Using nested loops" }, { text: "Using the `zip()` function", correct: true }, { text: "Using `for x, y in list1 + list2:`" }, { text: "It is not possible" }], explanation: "The `zip()` function takes multiple iterables and aggregates them, returning an iterator of tuples where the i-th tuple contains the i-th element from each of the argument sequences." },
+                { question: "What is an iterable?", answers: [{ text: "An object that can be used in a `for` loop", correct: true }, { text: "A type of list" }, { text: "A function that returns a sequence" }, { text: "An object with a `.next()` method" }], explanation: "An iterable is any Python object capable of returning its members one at a time, which allows it to be used on the right-hand side of a `for` loop." },
+                { question: "Can you modify a list while iterating over it?", answers: [{ text: "Yes, without any issues" }, { text: "No, it will always cause an error" }, { text: "It is risky and can lead to unexpected behavior", correct: true }, { text: "Only by using `enumerate()`" }], explanation: "Modifying a list (e.g., adding or removing elements) while iterating over it can cause strange behavior like skipping items. It's safer to iterate over a copy (`for x in my_list[:]:`)." },
+                { question: "How would you create a `for` loop that runs 10 times?", answers: [{ text: "`for i in 10:`" }, { text: "`for i in range(1, 10):`" }, { text: "`for i in range(10):`", correct: true }, { text: "`for i in range(1, 11):`" }], explanation: "`range(10)` generates numbers from 0 to 9, which is a total of 10 numbers, making it the most common and concise way to loop 10 times." },
+                { question: "What is the output? `for char in '_': print('loop')`", answers: [{ text: "It prints 'loop' once", correct: true }, { text: "It prints nothing" }, { text: "It prints '_' once" }, { text: "An error" }], explanation: "The string `'_'` is an iterable with one element. The loop variable `char` is assigned this character, the loop body executes once, and then the loop finishes." }
+            ],
+            "If...Else": [
+                { question: "Which keyword is used for a multi-way branch in an if-statement?", answers: [{ text: "`else if`" }, { text: "`elif`", correct: true }, { text: "`elseif`" }, { text: "`or if`" }], explanation: "`elif` is short for 'else if' and allows you to check multiple expressions for `True` and execute a block of code as soon as one of the conditions is met." },
+                { question: "Output: `a=50; b=10; if a>b: print(\"Hi\") else: print(\"Bye\")`", answers: [{ text: "`Hi`", correct: true }, { text: "`Bye`" }, { text: "Both are printed" }, { text: "Syntax Error" }], explanation: "The condition `a > b` (50 > 10) is true, so the code block inside the `if` statement is executed." },
+                { question: "How do you write a one-line if statement (ternary operator)?", answers: [{ text: "`print(\"A\") if a > b else print(\"B\")`", correct: true }, { text: "`if a > b: print(\"A\") else print(\"B\")`" }, { text: "`print(\"A\" ? \"B\") if a > b`" }, { text: "Not possible in Python" }], explanation: "Python's conditional expression syntax is `<value_if_true> if <condition> else <value_if_false>`." },
+                { question: "Which logical operator checks if both conditions are true?", answers: [{ text: "`or`" }, { text: "`and`", correct: true }, { text: "`both`" }, { text: "`&&`" }], explanation: "The `and` operator returns `True` only if both the left and right operands are true." },
+                { question: "Output of `if 5>10: print('A') elif 5>3: print('B')`?", answers: [{ text: "`A`" }, { text: "`B`", correct: true }, { text: "`C`" }, { text: "`A` and `B`" }], explanation: "The first condition `5 > 10` is false. The program proceeds to the `elif` condition, `5 > 3`, which is true. It prints 'B' and the statement ends." },
+                { question: "What does `pass` do inside an `if` block?", answers: [{ text: "Causes an error" }, { text: "Acts as a null operation", correct: true }, { text: "Stops the program" }, { text: "Is not allowed" }], explanation: "`pass` is a placeholder. It allows you to have a syntactically correct `if` block that does nothing." },
+                { question: "Can you have an `if` statement inside another `if`?", answers: [{ text: "No, it's not allowed" }, { text: "Yes, this is called a nested if", correct: true }, { text: "Only if you use `elif`" }, { text: "Only one level is allowed" }], explanation: "Nesting `if` statements is common and allows for more complex logic by checking a new condition only if a prior condition was met." },
+                { question: "Output? `x=10; if x>5: print(\"A\"); if x>8: print(\"B\")`", answers: [{ text: "`A`" }, { text: "`B`" }, { text: "`A` and `B`", correct: true }, { text: "Only `B`" }], explanation: "These are two separate, independent `if` statements, not an `if/elif` chain. Both conditions (`10 > 5` and `10 > 8`) are true, so both `print` statements are executed." },
+                { question: "Which operator checks for non-equality?", answers: [{ text: "`<>`" }, { text: "`!=`", correct: true }, { text: "`is not`" }, { text: "`not=`" }], explanation: "The `!=` operator compares the values of two operands and returns `True` if they are not equal." },
+                { question: "Is an `else` statement mandatory with an `if`?", answers: [{ text: "Yes, always" }, { text: "No, it's optional", correct: true }, { text: "Only if you have an `elif`" }, { text: "Yes, unless you use `pass`" }], explanation: "An `if` statement can exist on its own. The `elif` and `else` clauses are optional." },
+                { question: "What is a 'truthy' value?", answers: [{ text: "Any value that is `True`" }, { text: "A value that evaluates to True in a boolean context", correct: true }, { text: "Only the boolean `True`" }, { text: "A string 'true'" }], explanation: "Most objects in Python are 'truthy', including non-empty strings, non-zero numbers, and non-empty collections. They evaluate to `True` when used in an `if` condition." },
+                { question: "Which of these values is 'falsy'?", answers: [{ text: "`\"False\"`" }, { text: "`1`" }, { text: "`[]` (an empty list)", correct: true }, { text: "`[0]`" }], explanation: "Empty collections (lists, tuples, dicts), the number 0, `None`, and empty strings are all 'falsy', meaning they evaluate to `False` in a boolean context." },
+                { question: "What does `if x:` check if `x` is an integer?", answers: [{ text: "If `x` is positive" }, { text: "If `x` is not equal to 0", correct: true }, { text: "If `x` is an even number" }, { text: "It causes a TypeError" }], explanation: "For numbers, 'truthiness' is determined by whether they are non-zero. `if 0:` is false, but `if 1:`, `if -1:`, etc., are true." },
+                { question: "What is the syntax for `if NOT condition:`?", answers: [{ text: "`if ! condition:`" }, { text: "`if not condition:`", correct: true }, { text: "`if condition is not True:`" }, { text: "`unless condition:`" }], explanation: "The `not` logical operator is used to reverse the boolean value of a condition. `not True` is `False`." },
+                { question: "Output? `x=5; y=5; if x is y: print(\"A\"); else: print(\"B\")`", answers: [{ text: "`A`", correct: true }, { text: "`B`" }, { text: "Depends on Python version" }, { text: "An error" }], explanation: "The `is` operator checks for object identity. Python often reuses immutable objects like small integers, so `x` and `y` point to the exact same object in memory, making `x is y` true." },
+                { question: "What is the value of `x`? `x = 'A' if 10 > 5 else 'B'`", answers: [{ text: "`B`" }, { text: "`A`", correct: true }, { text: "True" }, { text: "An error" }], explanation: "This is a conditional expression (ternary operator). Since the condition `10 > 5` is true, the value before `if` ('A') is assigned to `x`." },
+                { question: "Which of the following is equivalent to `if x and y:`?", answers: [{ text: "`if x: if y:`", correct: true }, { text: "`if x or y:`" }, { text: "`if x: else: if y:`" }, { text: "`if x(y):`" }], explanation: "An `and` condition is true only if both parts are true. This is logically the same as a nested `if`, where the inner `if` is only checked if the outer `if` is true." },
+                { question: "What is required after the condition in an `if` or `elif` statement?", answers: [{ text: "A semicolon `;`" }, { text: "A colon `:`", correct: true }, { text: "Curly braces `{}`" }, { text: "The `then` keyword" }], explanation: "Python uses a colon `:` to signify the start of an indented code block for statements like `if`, `for`, `def`, etc." },
+                { question: "Output? `if 'a' in 'banana': print(1)`", answers: [{ text: "`1`", correct: true }, { text: "`True`" }, { text: "No output" }, { text: "An error" }], explanation: "The `in` operator checks for membership. Since the character 'a' is present in the string 'banana', the condition is true, and the code block is executed." },
+                { question: "What happens if an `if` statement has no indented block?", answers: [{ text: "It executes the next line" }, { text: "It does nothing" }, { text: "It raises an `IndentationError`", correct: true }, { text: "It implicitly `pass`es" }], explanation: "Python uses indentation to define code blocks. A control flow statement like `if` must be followed by an indented block, otherwise it's a syntax error." }
+            ],
+            "Operators": [
+                { question: "Which operator is used for exponentiation?", answers: [{ text: "`^`" }, { text: "`**`", correct: true }, { text: "`pow()`" }, { text: "`exp`" }], explanation: "The `**` operator raises the left operand to the power of the right operand (e.g., `2 ** 3` is 8)." },
+                { question: "What is the result of `10 // 3` (floor division)?", answers: [{ text: "`3.33`" }, { text: "`3`", correct: true }, { text: "`1`" }, { text: "`3.0`" }], explanation: "Floor division `//` performs division and then rounds the result down to the nearest whole number." },
+                { question: "Which operator is used for modulus (remainder)?", answers: [{ text: "`%`", correct: true }, { text: "`mod`" }, { text: "`rem`" }, { text: "`//`" }], explanation: "The modulus operator `%` returns the remainder of a division (e.g., `10 % 3` is 1)." },
+                { question: "What is `x` after `x = 5; x += 3`?", answers: [{ text: "`5`" }, { text: "`3`" }, { text: "`8`", correct: true }, { text: "`15`" }], explanation: "`x += 3` is an assignment operator, shorthand for `x = x + 3`. So, `x` becomes `5 + 3`, which is 8." },
+                { question: "Which of these is a comparison operator?", answers: [{ text: "`=`" }, { text: "`<>`" }, { text: "`>=`", correct: true }, { text: "`:=`" }], explanation: "Comparison operators like `==`, `!=`, `>`, `<`, `>=`, and `<=` compare two values and return a boolean result." },
+                { question: "What does the `is` operator check?", answers: [{ text: "If values are the same" }, { text: "If variables point to the same object", correct: true }, { text: "If data types are the same" }, { text: "If a variable is an instance" }], explanation: "`is` checks for object identity (if two variables refer to the exact same location in memory), while `==` checks for equality (if the values are the same)." },
+                { question: "What is the output of `True and False`?", answers: [{ text: "`True`" }, { text: "`False`", correct: true }, { text: "`None`" }, { text: "An error" }], explanation: "The logical `and` operator returns `True` only if both operands are true." },
+                { question: "What is the output of `not True`?", answers: [{ text: "`True`" }, { text: "`False`", correct: true }, { text: "`None`" }, { text: "An error" }], explanation: "The `not` operator reverses the boolean value of its operand." },
+                { question: "Which operator has the highest precedence?", answers: [{ text: "`+` (addition)" }, { text: "`**` (exponentiation)", correct: true }, { text: "`*` (multiplication)" }, { text: "`and` (logical AND)" }], explanation: "In the order of operations, exponentiation `**` is evaluated before arithmetic operators like `*` or `+`, which are evaluated before logical operators like `and`." },
+                { question: "What is the `in` operator used for?", answers: [{ text: "To check for membership in a sequence", correct: true }, { text: "Integer division" }, { text: "Object identity" }, { text: "Importing modules" }], explanation: "The `in` operator returns `True` if a specified value is found within a sequence (like a list, tuple, or string)." },
+                { question: "What is the result of `5 | 3` (Bitwise OR)?", answers: [{ text: "`1`" }, { text: "`7`", correct: true }, { text: "`2`" }, { text: "`15`" }], explanation: "In binary, 5 is `101` and 3 is `011`. A bitwise OR results in `111`, which is 7 in decimal." },
+                { question: "What is the result of `5 & 3` (Bitwise AND)?", answers: [{ text: "`1`", correct: true }, { text: "`7`" }, { text: "`2`" }, { text: "`15`" }], explanation: "In binary, 5 is `101` and 3 is `011`. A bitwise AND results in `001`, which is 1 in decimal." },
+                { question: "What is the walrus operator `:=` used for?", answers: [{ text: "Strict comparison" }, { text: "Assigning a value within an expression", correct: true }, { text: "Bitwise negation" }, { text: "Alternative to `==`" }], explanation: "The walrus operator, introduced in Python 3.8, allows you to assign a value to a variable as part of a larger expression, often simplifying code in `if` or `while` statements." },
+                { question: "What is the value of `x`? `x = 5 > 3 == True`", answers: [{ text: "`True`" }, { text: "`False`", correct: true }, { text: "`5`" }, { text: "An error" }], explanation: "Python supports operator chaining. This is evaluated as `(5 > 3) and (3 == True)`. Since `3 == True` is `False`, the whole expression is `False`." },
+                { question: "What does `'a' in 'apple'` evaluate to?", answers: [{ text: "`True`", correct: true }, { text: "`False`" }, { text: "`1`" }, { text: "An error" }], explanation: "The `in` operator checks for the presence of a substring within a string. Since `'a'` is in `'apple'`, it returns `True`." },
+                { question: "Which operator is used for bitwise XOR?", answers: [{ text: "`&`" }, { text: "`|`" }, { text: "`^`", correct: true }, { text: "`~`" }], explanation: "The caret `^` operator performs a bitwise XOR (exclusive OR). A bit in the result is set to 1 if the corresponding bits in the two operands are different." },
+                { question: "What is the result of `2 * 3 ** 2`?", answers: [{ text: "`36`" }, { text: "`18`", correct: true }, { text: "`12`" }, { text: "`64`" }], explanation: "Due to operator precedence, exponentiation `**` is performed before multiplication `*`. So, it's calculated as `2 * (3 ** 2)`, which is `2 * 9 = 18`." },
+                { question: "The `is not` operator checks for...", answers: [{ text: "Value inequality" }, { text: "Object identity inequality", correct: true }, { text: "Type mismatch" }, { text: "Membership exclusion" }], explanation: "`is not` is the inverse of `is`. It returns `True` if two variables do not point to the exact same object in memory." },
+                { question: "What is the result of `5 ^ 3` (Bitwise XOR)?", answers: [{ text: "`2`" }, { text: "`7`" }, { text: "`6`", correct: true }, { text: "`1`" }], explanation: "In binary, 5 is `101` and 3 is `011`. A bitwise XOR results in `110`, which is 6 in decimal." },
+                { question: "What is the output of `[1, 2] == [1, 2]` vs `[1, 2] is [1, 2]`", answers: [{ text: "Both are `True`" }, { text: "`True` and `False`", correct: true }, { text: "Both are `False`" }, { text: "`False` and `True`" }], explanation: "`==` checks if the values are equal, which they are. `is` checks if they are the same object. The two lists are separate objects in memory, so `is` returns `False`." }
+            ],
+            "Error Handling": [
+                { question: "Which block is used to catch exceptions in Python?", answers: [{ text: "`catch`" }, { text: "`try`" }, { text: "`except`", correct: true }, { text: "`error`" }], explanation: "The `except` block follows a `try` block and contains the code that is executed if an error of the specified type occurs in the `try` block." },
+                { question: "Which block's code is executed regardless of whether an exception occurred or not?", answers: [{ text: "`finally`", correct: true }, { text: "`else`" }, { text: "`always`" }, { text: "`ensure`" }], explanation: "The `finally` block is optional and is always executed after the `try` and `except` blocks, making it ideal for cleanup actions like closing files." },
+                { question: "What error is raised when you try to access a non-existent dictionary key?", answers: [{ text: "`IndexError`" }, { text: "`ValueError`" }, { text: "`KeyError`", correct: true }, { text: "`NameError`" }], explanation: "`KeyError` is raised when a dictionary key is not found." },
+                { question: "What error is raised when an operation receives an argument of the right type but an inappropriate value?", answers: [{ text: "`TypeError`" }, { text: "`ValueError`", correct: true }, { text: "`ArgumentError`" }, { text: "`IndexError`" }], explanation: "`ValueError` is raised when a function's argument is of the correct type but has an invalid value. For example, `int('abc')`." },
+                { question: "How do you intentionally raise an exception?", answers: [{ text: "`throw Exception`" }, { text: "`raise Exception`", correct: true }, { text: "`error Exception`" }, { text: "`exception()`" }], explanation: "The `raise` keyword is used to trigger an exception manually. You can raise built-in exceptions or custom ones." },
+                { question: "What error occurs if you try to add an integer and a string?", answers: [{ text: "`ValueError`" }, { text: "`SyntaxError`" }, { text: "`TypeError`", correct: true }, { text: "`MathError`" }], explanation: "`TypeError` is raised when an operation or function is applied to an object of an inappropriate type, such as adding `'hello'` and `5`." },
+                { question: "In a `try...except` block, when does the `else` clause execute?", answers: [{ text: "Always" }, { text: "Only if an exception occurs" }, { text: "Only if no exception occurs", correct: true }, { text: "Never" }], explanation: "The `else` block is optional and runs only if the code in the `try` block completes without raising any exceptions." },
+                { question: "What error do you get if you forget the colon `:` at the end of a statement like `if` or `for`?", answers: [{ text: "`IndentationError`" }, { text: "`SyntaxError`", correct: true }, { text: "`NameError`" }, { text: "`TypeError`" }], explanation: "Errors related to the grammar and structure of the code, like missing colons or invalid keywords, are caught by the parser and result in a `SyntaxError`." },
+                { question: "What does `except Exception as e:` do?", answers: [{ text: "Catches all exceptions and assigns the instance to `e`", correct: true }, { text: "Catches only the base `Exception` type" }, { text: "Creates a custom exception `e`" }, { text: "This is invalid syntax" }], explanation: "This is a common pattern to catch any standard exception. The `as e` part assigns the exception object to the variable `e`, so you can inspect it (e.g., `print(e)`)." },
+                { question: "What error is raised if you try to use a variable that has not been defined?", answers: [{ text: "`ValueError`" }, { text: "`ReferenceError`" }, { text: "`NameError`", correct: true }, { text: "`AttributeError`" }], explanation: "`NameError` occurs when the Python interpreter cannot find a local or global name you are trying to use." },
+                { question: "What is the error for an out-of-bounds list index?", answers: [{ text: "`KeyError`" }, { text: "`IndexError`", correct: true }, { text: "`BoundsError`" }, { text: "`ListError`" }], explanation: "`IndexError` is raised when you try to access a sequence (like a list or tuple) with an index that is outside its valid range." },
+                { question: "What is the purpose of a bare `except:` clause?", answers: [{ text: "It's a syntax error" }, { text: "It catches only `SyntaxError`" }, { text: "It catches all exceptions, including system exits", correct: true }, { text: "It is the recommended way to catch errors" }], explanation: "A bare `except:` will catch any exception. However, it's generally discouraged because it can hide programming errors and even catch things like `KeyboardInterrupt` (Ctrl+C)." },
+                { question: "What error might you see if you call a method that doesn't exist on an object?", answers: [{ text: "`MethodError`" }, { text: "`TypeError`" }, { text: "`AttributeError`", correct: true }, { text: "`NameError`" }], explanation: "`AttributeError` is raised when you try to access or assign to an attribute (or method) that an object doesn't have. For example, `[1, 2].appendd(3)`." },
+                { question: "Can you have multiple `except` blocks for one `try` block?", answers: [{ text: "No, only one is allowed" }, { text: "Yes, to handle different exceptions specifically", correct: true }, { text: "Only if you also have a `finally`" }, { text: "Only in Python 2" }], explanation: "You can chain multiple `except` blocks to handle different types of exceptions in different ways. The first matching `except` block is executed." },
+                { question: "What happens if an error occurs inside an `except` block?", answers: [{ text: "It is ignored" }, { text: "The `finally` block handles it" }, { text: "The original error is re-raised" }, { text: "The new exception is raised and not caught", correct: true }], explanation: "If an exception is raised inside an `except` or `finally` block, it propagates outwards and will not be caught by any other part of the same `try...except` statement." },
+                { question: "Which error is raised due to incorrect spacing or tabs?", answers: [{ text: "`SyntaxError`" }, { text: "`TabError`" }, { text: "`IndentationError`", correct: true }, { text: "`WhitespaceError`" }], explanation: "`IndentationError` (which is a subclass of `SyntaxError`) is raised when there's an issue with the indentation of your code, which is syntactically significant in Python." },
+                { question: "How would you catch multiple exceptions in a single `except` block?", answers: [{ text: "`except (ValueError, TypeError):`", correct: true }, { text: "`except ValueError, TypeError:`" }, { text: "`except [ValueError, TypeError]:`" }, { text: "It is not possible" }], explanation: "To handle multiple exceptions with the same code block, you can pass a tuple of exception types to a single `except` clause." },
+                { question: "What error is raised when `import` fails to find a module?", answers: [{ text: "`ImportError`" }, { text: "`ModuleNotFoundError`", correct: true }, { text: "`PathError`" }, { text: "`NameError`" }], explanation: "`ModuleNotFoundError` (a subclass of `ImportError`) is raised by the `import` statement when it cannot locate the specified module." },
+                { question: "What is the base class for all built-in exceptions?", answers: [{ text: "`Exception`" }, { text: "`StandardError`" }, { text: "`BaseException`", correct: true }, { text: "`Object`" }], explanation: "`BaseException` is the ultimate base class for all built-in exceptions. It is not recommended to catch this directly; `Exception` is used for almost all non-system-exiting errors." },
+                { question: "What happens if an exception is not caught by any `except` block?", answers: [{ text: "It is ignored" }, { text: "The `finally` block handles it" }, { text: "The program halts immediately" }, { text: "The exception propagates up the call stack", correct: true }], explanation: "If an exception is not caught by an `except` block, it propagates up to the calling function. If it's never caught, the program terminates and prints a traceback." }
+            ],
+            "Statements & Expressions": [
+                { question: "Which of the following is an expression?", answers: [{ text: "`x = 5`" }, { text: "`if x > 5:`" }, { text: "`5 + 3`", correct: true }, { text: "`def func():`" }], explanation: "An expression is something that evaluates to a value. `5 + 3` evaluates to `8`. The others are statements, which perform an action." },
+                { question: "Which of the following is a statement?", answers: [{ text: "`x + y`" }, { text: "`'hello'.upper()`" }, { text: "`print('hello')`", correct: true }, { text: "`x > y`" }], explanation: "`print('hello')` is a statement because it performs an action (printing to the console). While it's also a function call (an expression), it's used as a statement to *do* something." },
+                { question: "What is the primary purpose of an assignment statement like `x = 10`?", answers: [{ text: "To check if x is 10" }, { text: "To bind the name `x` to the value `10`", correct: true }, { text: "To evaluate to `True`" }, { text: "To print the value 10" }], explanation: "An assignment statement creates a binding between a name (the variable) and an object (the value)." },
+                { question: "Is a `for` loop a statement or an expression?", answers: [{ text: "Expression" }, { text: "Statement", correct: true }, { text: "Both" }, { text: "Neither" }], explanation: "A `for` loop is a statement. It does not evaluate to a value; it performs an action (iterating over a sequence)." },
+                { question: "Is a list comprehension, like `[x*2 for x in range(5)]`, a statement or an expression?", answers: [{ text: "Expression", correct: true }, { text: "Statement" }, { text: "Both" }, { text: "Neither" }], explanation: "A list comprehension is an expression because it evaluates to a new list object." },
+                { question: "What does the `pass` keyword represent?", answers: [{ text: "A comment" }, { text: "A null statement", correct: true }, { text: "An expression that returns `None`" }, { text: "A command to pause execution" }], explanation: "`pass` is a statement that does nothing. It is used as a placeholder where a statement is syntactically required but no action is needed." },
+                { question: "In Python, can a statement contain an expression?", answers: [{ text: "No, they are separate" }, { text: "Yes, most statements contain expressions", correct: true }, { text: "Only in `if` statements" }, { text: "Only `print` statements" }], explanation: "Yes, for example, in the statement `x = 5 + 3`, the part `5 + 3` is an expression." },
+                { question: "What does the `assert` statement do?", answers: [{ text: "Performs an assignment" }, { text: "Checks if a condition is true, raises `AssertionError` if not", correct: true }, { text: "Returns a boolean value" }, { text: "Defines a function" }], explanation: "The `assert` statement is used for debugging. It checks a condition, and if the condition is `False`, it raises an `AssertionError` with an optional message." },
+                { question: "The `del` keyword is used in a...", answers: [{ text: "Deletion expression" }, { text: "Deletion statement", correct: true }, { text: "Deletion function" }, { text: "Deletion object" }], explanation: "`del` is a statement used to unbind a name or delete items from a list or dictionary. It does not return a value." },
+                { question: "What is the key difference between a statement and an expression?", answers: [{ text: "Expressions use parentheses" }, { text: "Statements are always on one line" }, { text: "Expressions evaluate to a value; statements perform actions", correct: true }, { text: "Statements cannot be inside functions" }], explanation: "The core distinction is that expressions produce a value and can be part of other expressions or statements, whereas statements perform an action and represent a complete command." },
+                { question: "Which statement is used to bring a module into the current namespace?", answers: [{ text: "`include`" }, { text: "`load`" }, { text: "`import`", correct: true }, { text: "`use`" }], explanation: "The `import` statement is used to make code from one module available in another." },
+                { question: "Can an expression be a statement?", answers: [{ text: "Never" }, { text: "Yes, any expression can be a statement", correct: true }, { text: "Only if it returns `None`" }, { text: "Only if it is a function call" }], explanation: "In Python, any expression can be a statement (an 'expression statement'). The evaluated result is simply discarded. For example, `5 + 3` on a line by itself is a valid statement." },
+                { question: "What kind of statement is `return x`?", answers: [{ text: "Assignment statement" }, { text: "Control flow statement", correct: true }, { text: "Expression statement" }, { text: "Import statement" }], explanation: "`return` is a control flow statement because it alters the flow of execution by exiting the current function." },
+                { question: "`with open('file.txt') as f:` is what kind of statement?", answers: [{ text: "A loop statement" }, { text: "A context management statement", correct: true }, { text: "A declaration statement" }, { text: "An import statement" }], explanation: "The `with` statement is used to wrap the execution of a block with methods defined by a context manager, often used for resource management like opening files." },
+                { question: "What is a lambda form?", answers: [{ text: "An expression that creates an anonymous function", correct: true }, { text: "A statement that defines a multi-line function" }, { text: "A special type of string" }, { text: "A mathematical operator" }], explanation: "A `lambda` is an expression, not a statement. It evaluates to a new function object, which is why it can be used in places where a `def` statement cannot, like inside a list." },
+                { question: "The `yield` keyword is used in a...", answers: [{ text: "Yield statement" }, { text: "Return statement" }, { text: "Yield expression", correct: true }, { text: "Generator statement" }], explanation: "`yield` is an expression that yields a value from a generator. The entire `yield <value>` line is referred to as a yield expression." },
+                { question: "In `x[0] = 1`, `x[0]` is an expression, but the entire line is a...", answers: [{ text: "Compound expression" }, { text: "Conditional statement" }, { text: "Assignment statement", correct: true }, { text: "Function call" }], explanation: "The entire line is an assignment statement. It performs the action of changing the value at an index within an object. It does not evaluate to a value." },
+                { question: "What is the walrus operator `:=` an example of?", answers: [{ text: "A comparison operator" }, { text: "A statement" }, { text: "An assignment expression", correct: true }, { text: "A logical operator" }], explanation: "The walrus operator is unique because it forms an 'assignment expression'. It performs an assignment but also evaluates to the assigned value, allowing it to be used within larger expressions." },
+                { question: "What is a 'docstring'?", answers: [{ text: "A type of comment" }, { text: "A string literal that is the first statement in an object's definition", correct: true }, { text: "An error message" }, { text: "A variable for documentation" }], explanation: "A docstring, if present, must be the *very first statement* in a module, function, class, or method definition. It's a string literal, not a comment, and is used to generate documentation." },
+                { question: "The `if __name__ == '__main__':` block contains code that...", answers: [{ text: "Is always executed" }, { text: "Runs only when the file is imported by another script" }, { text: "Runs only when the file is executed directly", correct: true }, { text: "Is part of a function definition" }], explanation: "This is a compound conditional statement that checks if the script is the main program being run. It's a standard Python idiom to make code reusable." }
+            ]
+        };
+
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const welcomeContainer = document.getElementById('welcome-container');
+        const nameInput = document.getElementById('name-input');
+        const startButton = document.getElementById('start-btn');
+        const topicWelcomeHeader = document.getElementById('topic-welcome-header');
+        const topicContainer = document.getElementById('topic-container');
+        const topicGrid = document.getElementById('topic-grid');
+        const quizContainer = document.getElementById('quiz-container');
+        const reportContainer = document.getElementById('report-container');
+        const progressContainer = document.getElementById('progress-container');
+        const questionElement = document.getElementById('question');
+        const questionCounterElement = document.getElementById('question-counter');
+        const quizTimerElement = document.getElementById('quiz-timer');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const answerButtonsElement = document.getElementById('answer-buttons');
+        const explanationContainer = document.getElementById('explanation-container');
+        const nextButton = document.getElementById('next-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const pdfButton = document.getElementById('pdf-btn');
+        const scoreSummaryElement = document.getElementById('score-summary');
+        const topicResultElement = document.getElementById('topic-result');
+        const questionReviewElement = document.getElementById('question-review');
+        const backButton = document.getElementById('back-btn');
+        const backToTopicsButton = document.getElementById('back-to-topics-btn');
+        const progressButton = document.getElementById('progress-btn');
+        const backToTopicsFromProgress = document.getElementById('back-to-topics-from-progress');
+        const confettiCanvas = document.getElementById('confetti-canvas');
+
+        // State
+        let userName = '';
+        let currentTopic = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let audioCtx;
+        let progressChart;
+        const QUIZ_TIME_LIMIT = 300; // 5 minutes in seconds
+
+        // --- Theme Manager ---
+        function setInitialTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.innerText = '☀️';
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.innerText = '🌙';
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerText = '☀️';
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerText = '🌙';
+            }
+        });
+
+        // --- Sound Effects ---
+        function playSound(correct) {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
+
+            if (correct) {
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+            } else {
+                oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+                oscillator.type = 'sawtooth';
+            }
+
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.2);
+            oscillator.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // --- Confetti Effect ---
+        function launchConfetti() {
+            const canvas = confettiCanvas;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particles = [];
+            const colors = ['#3b82f6', '#22c55e', '#ef4444', '#f97316', '#8b5cf6'];
+
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height,
+                    radius: Math.random() * 5 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: Math.random() * 20 - 10,
+                    vy: Math.random() * -30 - 15,
+                    alpha: 1
+                });
+            }
+
+            function update() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.4;
+                    p.alpha -= 0.01;
+
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+
+                particles = particles.filter(p => p.alpha > 0);
+                if (particles.length > 0) {
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        // --- Quiz Logic ---
+        function initialize() {
+            showScreen(welcomeContainer);
+            nameInput.focus();
+        }
+
+        function startApp() {
+            userName = nameInput.value.trim();
+            if (userName) {
+                localStorage.setItem('quizUserName', userName);
+                topicWelcomeHeader.innerText = `Welcome, ${userName}!`;
+                initializeTopics();
+                showScreen(topicContainer);
+            } else {
+                alert('Please enter your name to continue.');
+            }
+        }
+
+        function initializeTopics() {
+            topicGrid.innerHTML = '';
+            Object.keys(allQuestions).forEach(topic => {
+                const button = document.createElement('button');
+                button.innerText = topic;
+                button.classList.add('topic-btn');
+                button.addEventListener('click', () => selectTopic(topic));
+                topicGrid.appendChild(button);
+            });
+        }
+
+        function selectTopic(topic) {
+            currentTopic = topic;
+            currentQuestions = allQuestions[topic];
+            startQuiz();
+        }
+
+        function showScreen(screen) {
+            [welcomeContainer, topicContainer, quizContainer, reportContainer, progressContainer].forEach(s => s.classList.add('hide'));
+            screen.classList.remove('hide');
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0; score = 0; userAnswers = [];
+            nextButton.classList.add('hide');
+            startTimer();
+            showScreen(quizContainer);
+            showQuestion();
+        }
+
+        function startTimer() {
+            let timeLeft = QUIZ_TIME_LIMIT;
+            quizTimerElement.textContent = `05:00`;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+                const seconds = String(timeLeft % 60).padStart(2, '0');
+                quizTimerElement.textContent = `${minutes}:${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showReport();
+                }
+            }, 1000);
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex) / currentQuestions.length) * 100;
+            progressBarFill.style.width = `${progress}%`;
+        }
+
+        function showQuestion() {
+            resetState();
+            updateProgressBar();
+            let currentQuestion = currentQuestions[currentQuestionIndex];
+            let questionNo = currentQuestionIndex + 1;
+
+            questionElement.innerHTML = currentQuestion.question;
+            questionCounterElement.innerText = `Question ${questionNo} of ${currentQuestions.length}`;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerHTML = answer.text;
+                button.classList.add('btn');
+                if (answer.correct) button.dataset.correct = "true";
+                button.addEventListener('click', selectAnswer);
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.classList.add('hide');
+            explanationContainer.innerHTML = '';
+            answerButtonsElement.innerHTML = '';
+        }
+
+        function selectAnswer(e) {
+            const selectedBtn = e.target.closest('.btn');
+            const isCorrect = selectedBtn.dataset.correct === "true";
+
+            playSound(isCorrect);
+            if (isCorrect) score++;
+
+            const currentQuestion = currentQuestions[currentQuestionIndex];
+            userAnswers.push({
+                question: currentQuestion.question,
+                selected: selectedBtn.innerHTML,
+                correct: currentQuestion.answers.find(ans => ans.correct).text,
+                explanation: currentQuestion.explanation,
+                isCorrect: isCorrect
+            });
+
+            Array.from(answerButtonsElement.children).forEach(button => {
+                if (button.dataset.correct === "true") button.classList.add('correct');
+                else if (button === selectedBtn) button.classList.add('incorrect');
+                button.disabled = true;
+            });
+
+            showExplanation(currentQuestion.explanation);
+            progressBarFill.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+            nextButton.classList.remove('hide');
+        }
+
+        function showExplanation(explanation) {
+            explanationContainer.innerHTML = `<div id="explanation-box"><h4>Explanation</h4><p>${explanation}</p></div>`;
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) showQuestion();
+            else showReport();
+        }
+
+        function showReport() {
+            clearInterval(timerInterval);
+            saveQuizResult();
+            showScreen(reportContainer);
+
+            scoreSummaryElement.innerText = `You Scored ${score} / ${currentQuestions.length}!`;
+            topicResultElement.innerText = `Quiz Topic: ${currentTopic}`;
+
+            questionReviewElement.innerHTML = '';
+            userAnswers.forEach((answer, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review-item');
+                let resultHTML = `<div class="review-question">${index + 1}. ${answer.question}</div>`;
+                if (answer.isCorrect) {
+                    resultHTML += `<div class="review-answer correct-answer">Your answer: ${answer.selected}</div>`;
+                } else {
+                    resultHTML += `<div class="review-answer user-incorrect">Your answer: ${answer.selected}</div>`;
+                    resultHTML += `<div class="review-answer correct-answer">Correct answer: ${answer.correct}</div>`;
+                }
+                reviewItem.innerHTML = resultHTML;
+                questionReviewElement.appendChild(reviewItem);
+            });
+
+            if ((score / currentQuestions.length) >= 0.8) {
+                launchConfetti();
+            }
+        }
+
+        // --- Performance History ---
+        function saveQuizResult() {
+            const history = JSON.parse(localStorage.getItem('quizHistory')) || [];
+            history.push({
+                topic: currentTopic,
+                score: score,
+                total: currentQuestions.length,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(history));
+        }
+
+        function showProgress() {
+            showScreen(progressContainer);
+            const history = JSON.parse(localStorage.getItem('quizHistory')) || [];
+            renderProgressChart(history);
+        }
+
+        function renderProgressChart(history) {
+            const ctx = document.getElementById('progress-chart').getContext('2d');
+            const topicData = {};
+            history.forEach(item => {
+                if (!topicData[item.topic]) {
+                    topicData[item.topic] = [];
+                }
+                topicData[item.topic].push({
+                    x: new Date(item.date),
+                    y: (item.score / item.total) * 100
+                });
+            });
+
+            const datasets = Object.keys(topicData).map((topic, index) => {
+                const colors = ['#3b82f6', '#22c55e', '#ef4444', '#f97316', '#8b5cf6', '#14b8a6', '#d946ef', '#f59e0b'];
+                return {
+                    label: `${topic} Scores (%)`,
+                    data: topicData[topic],
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: `${colors[index % colors.length]}33`,
+                    borderWidth: 2,
+                    tension: 0.1
+                }
+            });
+
+            if (progressChart) progressChart.destroy();
+
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'top', }, title: { display: true, text: 'Quiz Performance Over Time' } },
+                    scales: {
+                        x: { type: 'time', time: { unit: 'day' }, title: { display: true, text: 'Date' } },
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (%)' } }
+                    }
+                }
+            });
+        }
+
+        // --- PDF Generation ---
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+            const cleanHtml = (html) => {
+                if (!html) return '';
+                return html.replace(/<\/?code>/g, '`').replace(/<\/?i>/g, '').replace(/<\/?b>/g, '');
+            };
+
+            let yPos = 20;
+            const pageHeight = doc.internal.pageSize.height;
+            const pageWidth = doc.internal.pageSize.width;
+            const margin = 15;
+            const usableWidth = pageWidth - (2 * margin);
+            const currentUser = localStorage.getItem('quizUserName') || 'User';
+
+            doc.setFontSize(24); doc.setFont('helvetica', 'bold');
+            doc.text('Python Quiz Results', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 12;
+
+            doc.setFontSize(14); doc.setFont('helvetica', 'normal');
+            doc.text(`Report for: ${currentUser}`, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 7;
+            doc.text(`Topic: ${currentTopic}`, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 7;
+
+            doc.setFontSize(16); doc.setFont('helvetica', 'bold');
+            doc.text(`Final Score: ${score} / ${currentQuestions.length}`, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+
+            doc.setLineWidth(0.5); doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+
+            userAnswers.forEach((answer, index) => {
+                const checkPageBreak = (neededHeight) => {
+                    if (yPos + neededHeight > pageHeight - margin) {
+                        doc.addPage();
+                        yPos = margin;
+                    }
+                };
+
+                doc.setFontSize(12); doc.setFont("helvetica", "bold");
+                const questionText = `Q${index + 1}: ${cleanHtml(answer.question)}`;
+                const questionLines = doc.splitTextToSize(questionText, usableWidth);
+                checkPageBreak(questionLines.length * 5 + 25);
+                doc.text(questionLines, margin, yPos);
+                yPos += (questionLines.length * 5) + 5;
+
+                doc.setFont("helvetica", "normal"); doc.setFontSize(11);
+
+                const userAnswerText = `Your Answer: ${cleanHtml(answer.selected)}`;
+                const userLines = doc.splitTextToSize(userAnswerText, usableWidth - 5);
+                doc.setTextColor(answer.isCorrect ? '#28a745' : '#dc3545');
+                doc.text(userLines, margin + 5, yPos);
+                yPos += (userLines.length * 5);
+
+                if (!answer.isCorrect) {
+                    yPos += 2;
+                    const correctAnswerText = `Correct Answer: ${cleanHtml(answer.correct)}`;
+                    const correctLines = doc.splitTextToSize(correctAnswerText, usableWidth - 5);
+                    doc.setTextColor('#28a745');
+                    doc.text(correctLines, margin + 5, yPos);
+                    yPos += (correctLines.length * 5);
+                }
+
+                yPos += 3;
+                const explanationText = `Explanation: ${cleanHtml(answer.explanation)}`;
+                const explanationLines = doc.splitTextToSize(explanationText, usableWidth - 5);
+                doc.setTextColor('#6c757d');
+                doc.text(explanationLines, margin + 5, yPos);
+                yPos += (explanationLines.length * 5);
+
+                doc.setTextColor('#212529');
+                yPos += 10;
+                if (index < userAnswers.length - 1) {
+                    doc.setDrawColor('#e9ecef');
+                    doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+                }
+            });
+
+            doc.save(`Python-Quiz-${currentTopic.replace(/\s/g, '_')}-${currentUser}.pdf`);
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', startApp);
+        nameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') startApp(); });
+        nextButton.addEventListener('click', handleNextButton);
+        restartButton.addEventListener('click', startQuiz);
+        backButton.addEventListener('click', () => showScreen(topicContainer));
+        backToTopicsButton.addEventListener('click', () => showScreen(topicContainer));
+        progressButton.addEventListener('click', showProgress);
+        backToTopicsFromProgress.addEventListener('click', () => showScreen(topicContainer));
+        pdfButton.addEventListener('click', generatePDF);
+
+        // Initial call
+        setInitialTheme();
+        initialize();
+    </script>
+</body>
+
+</html>
