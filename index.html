@@ -65,6 +65,7 @@
         #welcome-container {
             padding: 40px;
             text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         #name-input {
@@ -87,7 +88,6 @@
 
         /* --- Topic Selection & Progress Screen --- */
         #topic-container h1,
-        #progress-container h1,
         #welcome-container h1 {
             text-align: center;
             padding: 20px 20px 10px;
@@ -100,7 +100,6 @@
         }
 
         #topic-container p,
-        #progress-container p,
         #welcome-container p {
             text-align: center;
             color: var(--light-text);
@@ -151,7 +150,8 @@
             padding: 25px 30px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: center; /* Center the counter */
+            justify-content: center;
+            /* Center the counter */
             align-items: center;
         }
 
@@ -167,6 +167,7 @@
             margin-top: 10px;
             line-height: 1.5;
             padding: 0 30px;
+            animation: slideIn 0.5s ease-in-out;
         }
 
         code {
@@ -196,11 +197,13 @@
             cursor: pointer;
             text-align: left;
             transition: all 0.2s ease;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         .btn:hover:not(:disabled) {
             border-color: var(--primary-color);
             background-color: var(--main-color);
+            transform: scale(1.02);
         }
 
         .btn:disabled {
@@ -246,6 +249,18 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
 
@@ -313,9 +328,9 @@
         }
 
         /* --- Report & Progress Styles --- */
-        #report-container,
-        #progress-container {
+        #report-container {
             padding: 40px;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         #score-summary {
@@ -409,12 +424,6 @@
             z-index: 1000;
         }
 
-        #progress-chart-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 20px auto;
-        }
-
         /* --- Mobile Responsiveness --- */
         @media (max-width: 600px) {
             body {
@@ -428,7 +437,6 @@
             }
 
             #topic-container h1,
-            #progress-container h1,
             #welcome-container h1 {
                 font-size: 1.5rem;
             }
@@ -463,7 +471,6 @@
             }
 
             #report-container,
-            #progress-container,
             #welcome-container {
                 padding: 20px;
             }
@@ -484,22 +491,8 @@
 
         <div id="topic-container" class="hide">
             <h1 id="topic-welcome-header">Welcome!</h1>
-            <p>Select a topic to test your knowledge or view your progress.</p>
-            <div class="topic-header-controls">
-                <button id="progress-btn" class="nav-btn">My Progress</button>
-            </div>
+            <p>Select a topic to test your knowledge.</p>
             <div id="topic-grid"></div>
-        </div>
-
-        <div id="progress-container" class="hide">
-            <h1>Your Progress</h1>
-            <p>Review your quiz history and performance over time.</p>
-            <div id="progress-chart-container">
-                <canvas id="progress-chart"></canvas>
-            </div>
-            <div class="controls">
-                <button id="back-to-topics-from-progress" class="control-btn nav-control-btn">Back to Topics</button>
-            </div>
         </div>
 
         <div id="quiz-container" class="hide">
@@ -766,7 +759,6 @@
         const topicGrid = document.getElementById('topic-grid');
         const quizContainer = document.getElementById('quiz-container');
         const reportContainer = document.getElementById('report-container');
-        const progressContainer = document.getElementById('progress-container');
         const questionElement = document.getElementById('question');
         const questionCounterElement = document.getElementById('question-counter');
         const progressBarFill = document.getElementById('progress-bar-fill');
@@ -780,8 +772,6 @@
         const questionReviewElement = document.getElementById('question-review');
         const backButton = document.getElementById('back-btn');
         const backToTopicsButton = document.getElementById('back-to-topics-btn');
-        const progressButton = document.getElementById('progress-btn');
-        const backToTopicsFromProgress = document.getElementById('back-to-topics-from-progress');
         const confettiCanvas = document.getElementById('confetti-canvas');
 
         // State
@@ -791,33 +781,6 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let userAnswers = [];
-        let audioCtx;
-        let progressChart;
-
-        // --- Sound Effects ---
-        function playSound(correct) {
-            if (!audioCtx) {
-                audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-            }
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
-
-            if (correct) {
-                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
-            } else {
-                oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
-                oscillator.type = 'sawtooth';
-            }
-
-            oscillator.start();
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.2);
-            oscillator.stop(audioCtx.currentTime + 0.2);
-        }
 
         // --- Confetti Effect ---
         function launchConfetti() {
@@ -899,7 +862,7 @@
         }
 
         function showScreen(screen) {
-            [welcomeContainer, topicContainer, quizContainer, reportContainer, progressContainer].forEach(s => s.classList.add('hide'));
+            [welcomeContainer, topicContainer, quizContainer, reportContainer].forEach(s => s.classList.add('hide'));
             screen.classList.remove('hide');
         }
 
@@ -946,7 +909,6 @@
             const selectedBtn = e.target.closest('.btn');
             const isCorrect = selectedBtn.dataset.correct === "true";
 
-            playSound(isCorrect);
             if (isCorrect) score++;
 
             const currentQuestion = currentQuestions[currentQuestionIndex];
@@ -1016,53 +978,6 @@
                 date: new Date().toISOString()
             });
             localStorage.setItem('quizHistory', JSON.stringify(history));
-        }
-
-        function showProgress() {
-            showScreen(progressContainer);
-            const history = JSON.parse(localStorage.getItem('quizHistory')) || [];
-            renderProgressChart(history);
-        }
-
-        function renderProgressChart(history) {
-            const ctx = document.getElementById('progress-chart').getContext('2d');
-            const topicData = {};
-            history.forEach(item => {
-                if (!topicData[item.topic]) {
-                    topicData[item.topic] = [];
-                }
-                topicData[item.topic].push({
-                    x: new Date(item.date),
-                    y: (item.score / item.total) * 100
-                });
-            });
-
-            const datasets = Object.keys(topicData).map((topic, index) => {
-                const colors = ['#3b82f6', '#22c55e', '#ef4444', '#f97316', '#8b5cf6', '#14b8a6', '#d946ef', '#f59e0b'];
-                return {
-                    label: `${topic} Scores (%)`,
-                    data: topicData[topic],
-                    borderColor: colors[index % colors.length],
-                    backgroundColor: `${colors[index % colors.length]}33`,
-                    borderWidth: 2,
-                    tension: 0.1
-                }
-            });
-
-            if (progressChart) progressChart.destroy();
-
-            progressChart = new Chart(ctx, {
-                type: 'line',
-                data: { datasets: datasets },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { position: 'top', }, title: { display: true, text: 'Quiz Performance Over Time' } },
-                    scales: {
-                        x: { type: 'time', time: { unit: 'day' }, title: { display: true, text: 'Date' } },
-                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (%)' } }
-                    }
-                }
-            });
         }
 
         // --- PDF Generation (New & Improved) ---
@@ -1155,7 +1070,7 @@
             // --- Loop through answers ---
             userAnswers.forEach((answer, index) => {
                 const cleanHtml = (html) => html ? html.replace(/<\/?code>/g, '`').replace(/<\/?(i|b)>/g, '') : '';
-                
+
                 // Question
                 const questionText = `${index + 1}. ${cleanHtml(answer.question)}`;
                 const questionLines = doc.splitTextToSize(questionText, usableWidth);
@@ -1229,8 +1144,6 @@
         restartButton.addEventListener('click', startQuiz);
         backButton.addEventListener('click', () => showScreen(topicContainer));
         backToTopicsButton.addEventListener('click', () => showScreen(topicContainer));
-        progressButton.addEventListener('click', showProgress);
-        backToTopicsFromProgress.addEventListener('click', () => showScreen(topicContainer));
         pdfButton.addEventListener('click', generatePDF);
 
         // Initial call
