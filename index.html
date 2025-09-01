@@ -12,22 +12,6 @@
 
         /* --- Themes --- */
         :root {
-            --bg-color: #f0f4f8;
-            --main-color: #ffffff;
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --text-color: #1f2937;
-            --light-text: #6b7280;
-            --correct-color: #22c55e;
-            --incorrect-color: #ef4444;
-            --border-color: #e5e7eb;
-            --shadow-color: rgba(0, 0, 0, 0.08);
-            --btn-bg: #f9fafb;
-            --btn-border: #d1d5db;
-            --explanation-bg: #eef2ff;
-        }
-
-        body.dark-mode {
             --bg-color: #111827;
             --main-color: #1f2937;
             --primary-color: #3b82f6;
@@ -75,21 +59,6 @@
             margin-top: 50px;
             overflow: hidden;
             transition: all 0.3s ease;
-        }
-
-        .theme-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--light-text);
-            transition: color 0.3s ease;
-            z-index: 100;
-        }
-
-        .theme-switcher:hover {
-            color: var(--primary-color);
         }
 
         /* --- Welcome Screen --- */
@@ -182,7 +151,7 @@
             padding: 25px 30px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* Center the counter */
             align-items: center;
         }
 
@@ -498,17 +467,11 @@
             #welcome-container {
                 padding: 20px;
             }
-
-            .theme-switcher {
-                top: 10px;
-                right: 10px;
-            }
         }
     </style>
 </head>
 
 <body>
-    <div class="theme-switcher" id="theme-toggle">🌙</div>
     <canvas id="confetti-canvas"></canvas>
 
     <div class="container">
@@ -794,7 +757,6 @@
         };
 
         // DOM Elements
-        const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         const welcomeContainer = document.getElementById('welcome-container');
         const nameInput = document.getElementById('name-input');
@@ -832,33 +794,10 @@
         let audioCtx;
         let progressChart;
 
-        // --- Theme Manager ---
-        function setInitialTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                body.classList.add('dark-mode');
-                themeToggle.innerText = '☀️';
-            } else {
-                body.classList.remove('dark-mode');
-                themeToggle.innerText = '🌙';
-            }
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                themeToggle.innerText = '☀️';
-            } else {
-                localStorage.setItem('theme', 'light');
-                themeToggle.innerText = '🌙';
-            }
-        });
-
         // --- Sound Effects ---
         function playSound(correct) {
             if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioCtx = new(window.AudioContext || window.webkitAudioContext)();
             }
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
@@ -965,7 +904,9 @@
         }
 
         function startQuiz() {
-            currentQuestionIndex = 0; score = 0; userAnswers = [];
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
             nextButton.classList.add('hide');
             showScreen(quizContainer);
             showQuestion();
@@ -1124,92 +1065,173 @@
             });
         }
 
-        // --- PDF Generation ---
+        // --- PDF Generation (New & Improved) ---
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
-            const cleanHtml = (html) => {
-                if (!html) return '';
-                return html.replace(/<\/?code>/g, '`').replace(/<\/?i>/g, '').replace(/<\/?b>/g, '');
-            };
-
-            let yPos = 20;
+            // --- PDF Configuration ---
             const pageHeight = doc.internal.pageSize.height;
             const pageWidth = doc.internal.pageSize.width;
             const margin = 15;
             const usableWidth = pageWidth - (2 * margin);
             const currentUser = localStorage.getItem('quizUserName') || 'User';
+            const generationDate = new Date().toLocaleDateString('en-GB');
 
-            doc.setFontSize(24); doc.setFont('helvetica', 'bold');
-            doc.text('Python Quiz Results', pageWidth / 2, yPos, { align: 'center' });
-            yPos += 12;
+            // Colors
+            const primaryColor = '#3b82f6';
+            const correctColor = '#22c55e';
+            const incorrectColor = '#ef4444';
+            const textColor = '#F9FAFB';
+            const mutedTextColor = '#9CA3AF';
+            const boxBgColor = '#374151';
 
-            doc.setFontSize(14); doc.setFont('helvetica', 'normal');
-            doc.text(`Report for: ${currentUser}`, pageWidth / 2, yPos, { align: 'center' });
+            let yPos = 0;
+
+            // --- Helper for adding a footer ---
+            const addFooter = () => {
+                const pageCount = doc.internal.getNumberOfPages();
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(mutedTextColor);
+                doc.text(`Page ${pageCount} | Report for ${currentUser}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+            };
+
+            // --- Header ---
+            doc.setFillColor(primaryColor);
+            doc.rect(0, 0, pageWidth, 30, 'F');
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(textColor);
+            doc.text('Python Quiz Results', pageWidth / 2, 18, { align: 'center' });
+            yPos = 35;
+
+            // --- Summary Section ---
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(textColor);
+            doc.text('Quiz Summary', margin, yPos);
+            yPos += 2;
+            doc.setDrawColor(primaryColor);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos, margin + 28, yPos);
+            yPos += 8;
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            const scorePercentage = ((score / currentQuestions.length) * 100).toFixed(1);
+
+            doc.text(`User:`, margin, yPos);
+            doc.text(`${currentUser}`, margin + 40, yPos, { fontStyle: 'bold' });
+            doc.text(`Topic:`, margin + usableWidth / 2, yPos);
+            doc.text(`${currentTopic}`, margin + usableWidth / 2 + 25, yPos, { fontStyle: 'bold' });
             yPos += 7;
-            doc.text(`Topic: ${currentTopic}`, pageWidth / 2, yPos, { align: 'center' });
-            yPos += 7;
 
-            doc.setFontSize(16); doc.setFont('helvetica', 'bold');
-            doc.text(`Final Score: ${score} / ${currentQuestions.length}`, pageWidth / 2, yPos, { align: 'center' });
+            doc.text(`Final Score:`, margin, yPos);
+            doc.text(`${score} / ${currentQuestions.length}`, margin + 40, yPos, { fontStyle: 'bold' });
+            doc.text(`Percentage:`, margin + usableWidth / 2, yPos);
+            doc.text(`${scorePercentage}%`, margin + usableWidth / 2 + 25, yPos, { fontStyle: 'bold' });
             yPos += 15;
 
-            doc.setLineWidth(0.5); doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+            // --- Question Review Header ---
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Question Review', margin, yPos);
+            yPos += 2;
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos, margin + 35, yPos);
+            yPos += 8;
 
+            // --- Loop through answers ---
             userAnswers.forEach((answer, index) => {
-                const checkPageBreak = (neededHeight) => {
-                    if (yPos + neededHeight > pageHeight - margin) {
-                        doc.addPage();
-                        yPos = margin;
-                    }
-                };
+                const cleanHtml = (html) => html ? html.replace(/<\/?code>/g, '`').replace(/<\/?(i|b)>/g, '') : '';
 
-                doc.setFontSize(12); doc.setFont("helvetica", "bold");
+                // Calculate required height
                 const questionText = `Q${index + 1}: ${cleanHtml(answer.question)}`;
-                const questionLines = doc.splitTextToSize(questionText, usableWidth);
-                checkPageBreak(questionLines.length * 5 + 25);
-                doc.text(questionLines, margin, yPos);
-                yPos += (questionLines.length * 5) + 5;
-
-                doc.setFont("helvetica", "normal"); doc.setFontSize(11);
-
+                const questionLines = doc.splitTextToSize(questionText, usableWidth - 10);
                 const userAnswerText = `Your Answer: ${cleanHtml(answer.selected)}`;
-                const userLines = doc.splitTextToSize(userAnswerText, usableWidth - 5);
-                doc.setTextColor(answer.isCorrect ? '#28a745' : '#dc3545');
-                doc.text(userLines, margin + 5, yPos);
-                yPos += (userLines.length * 5);
-
-                if (!answer.isCorrect) {
-                    yPos += 2;
-                    const correctAnswerText = `Correct Answer: ${cleanHtml(answer.correct)}`;
-                    const correctLines = doc.splitTextToSize(correctAnswerText, usableWidth - 5);
-                    doc.setTextColor('#28a745');
-                    doc.text(correctLines, margin + 5, yPos);
-                    yPos += (correctLines.length * 5);
-                }
-
-                yPos += 3;
+                const userLines = doc.splitTextToSize(userAnswerText, usableWidth - 25);
                 const explanationText = `Explanation: ${cleanHtml(answer.explanation)}`;
-                const explanationLines = doc.splitTextToSize(explanationText, usableWidth - 5);
-                doc.setTextColor('#6c757d');
-                doc.text(explanationLines, margin + 5, yPos);
-                yPos += (explanationLines.length * 5);
+                const explanationLines = doc.splitTextToSize(explanationText, usableWidth - 15);
 
-                doc.setTextColor('#212529');
-                yPos += 10;
-                if (index < userAnswers.length - 1) {
-                    doc.setDrawColor('#e9ecef');
-                    doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+                let requiredHeight = 10; // Top/bottom padding
+                requiredHeight += questionLines.length * 5;
+                requiredHeight += 5; // Spacing
+                requiredHeight += userLines.length * 4.5;
+                requiredHeight += 5; // Spacing
+                if (!answer.isCorrect) {
+                    const correctLines = doc.splitTextToSize(`Correct: ${cleanHtml(answer.correct)}`, usableWidth - 25);
+                    requiredHeight += correctLines.length * 4.5 + 5;
                 }
+                requiredHeight += explanationLines.length * 4 + 8; // Explanation + padding
+
+                // Page break check
+                if (yPos + requiredHeight > pageHeight - 20) {
+                    addFooter();
+                    doc.addPage();
+                    yPos = margin;
+                }
+
+                // Draw the container card
+                doc.setFillColor(boxBgColor);
+                doc.setDrawColor(primaryColor);
+                doc.setLineWidth(0.2);
+                doc.roundedRect(margin, yPos, usableWidth, requiredHeight - 8, 3, 3, 'FD');
+                let currentY = yPos + 8;
+
+                // Print Question
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.setTextColor(textColor);
+                doc.text(questionLines, margin + 5, currentY);
+                currentY += questionLines.length * 5 + 5;
+
+                // Print User Answer
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                doc.setFontSize(14); // For icon
+                if (answer.isCorrect) {
+                    doc.setTextColor(correctColor);
+                    doc.text('✔', margin + 7, currentY);
+                } else {
+                    doc.setTextColor(incorrectColor);
+                    doc.text('✘', margin + 7, currentY);
+                }
+                doc.setFontSize(10);
+                doc.setTextColor(textColor);
+                doc.text(userLines, margin + 15, currentY);
+                currentY += userLines.length * 4.5 + 5;
+
+                // Print Correct Answer if needed
+                if (!answer.isCorrect) {
+                    doc.setTextColor(correctColor);
+                    doc.setFontSize(14);
+                    doc.text('✔', margin + 7, currentY);
+                    doc.setFontSize(10);
+                    const correctText = `Correct Answer: ${cleanHtml(answer.correct)}`;
+                    const correctLines = doc.splitTextToSize(correctText, usableWidth - 25);
+                    doc.text(correctLines, margin + 15, currentY);
+                    currentY += correctLines.length * 4.5 + 5;
+                }
+
+                // Print Explanation
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(mutedTextColor);
+                doc.setFontSize(9.5);
+                doc.text(explanationLines, margin + 10, currentY);
+
+                yPos += requiredHeight;
             });
 
+            addFooter();
             doc.save(`Python-Quiz-${currentTopic.replace(/\s/g, '_')}-${currentUser}.pdf`);
         }
 
         // Event Listeners
         startButton.addEventListener('click', startApp);
-        nameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') startApp(); });
+        nameInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') startApp();
+        });
         nextButton.addEventListener('click', handleNextButton);
         restartButton.addEventListener('click', startQuiz);
         backButton.addEventListener('click', () => showScreen(topicContainer));
@@ -1219,7 +1241,6 @@
         pdfButton.addEventListener('click', generatePDF);
 
         // Initial call
-        setInitialTheme();
         initialize();
     </script>
 </body>
