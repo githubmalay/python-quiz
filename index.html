@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Python Quiz</title>
-    <!-- Library Imports -->
+    <title>Python Quiz</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -185,12 +184,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        #quiz-timer {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary-color);
         }
 
         #question-counter {
@@ -519,7 +512,6 @@
     <canvas id="confetti-canvas"></canvas>
 
     <div class="container">
-        <!-- Welcome Screen -->
         <div id="welcome-container">
             <h1>Python Skills Challenge</h1>
             <p>Please enter your name to begin.</p>
@@ -527,7 +519,6 @@
             <button id="start-btn" class="control-btn">Start Quiz</button>
         </div>
 
-        <!-- Topic Selection Screen -->
         <div id="topic-container" class="hide">
             <h1 id="topic-welcome-header">Welcome!</h1>
             <p>Select a topic to test your knowledge or view your progress.</p>
@@ -537,7 +528,6 @@
             <div id="topic-grid"></div>
         </div>
 
-        <!-- Progress Screen -->
         <div id="progress-container" class="hide">
             <h1>Your Progress</h1>
             <p>Review your quiz history and performance over time.</p>
@@ -549,11 +539,9 @@
             </div>
         </div>
 
-        <!-- Quiz Screen -->
         <div id="quiz-container" class="hide">
             <div class="quiz-header">
                 <div id="question-counter"></div>
-                <div id="quiz-timer">05:00</div>
             </div>
             <div class="progress-container">
                 <div class="progress-bar">
@@ -569,7 +557,6 @@
             </div>
         </div>
 
-        <!-- Report Screen -->
         <div id="report-container" class="hide">
             <h2 id="score-summary"></h2>
             <p id="topic-result"></p>
@@ -820,7 +807,6 @@
         const progressContainer = document.getElementById('progress-container');
         const questionElement = document.getElementById('question');
         const questionCounterElement = document.getElementById('question-counter');
-        const quizTimerElement = document.getElementById('quiz-timer');
         const progressBarFill = document.getElementById('progress-bar-fill');
         const answerButtonsElement = document.getElementById('answer-buttons');
         const explanationContainer = document.getElementById('explanation-container');
@@ -843,10 +829,8 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let userAnswers = [];
-        let timerInterval;
         let audioCtx;
         let progressChart;
-        const QUIZ_TIME_LIMIT = 300; // 5 minutes in seconds
 
         // --- Theme Manager ---
         function setInitialTheme() {
@@ -983,25 +967,8 @@
         function startQuiz() {
             currentQuestionIndex = 0; score = 0; userAnswers = [];
             nextButton.classList.add('hide');
-            startTimer();
             showScreen(quizContainer);
             showQuestion();
-        }
-
-        function startTimer() {
-            let timeLeft = QUIZ_TIME_LIMIT;
-            quizTimerElement.textContent = `05:00`;
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-                const seconds = String(timeLeft % 60).padStart(2, '0');
-                quizTimerElement.textContent = `${minutes}:${seconds}`;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    showReport();
-                }
-            }, 1000);
         }
 
         function updateProgressBar() {
@@ -1072,7 +1039,6 @@
         }
 
         function showReport() {
-            clearInterval(timerInterval);
             saveQuizResult();
             showScreen(reportContainer);
 
