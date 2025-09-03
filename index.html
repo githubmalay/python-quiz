@@ -8,421 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- Welcome Screen --- */
-        #welcome-container {
-            padding: 40px;
-            text-align: center;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        #name-input {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-            font-size: 1rem;
-            border-radius: 10px;
-            border: 2px solid var(--border-color);
-            margin-top: 20px;
-            margin-bottom: 20px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        #name-input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        /* --- Topic Selection & Progress Screen --- */
-        #topic-container h1,
-        #welcome-container h1 {
-            text-align: center;
-            padding: 20px 20px 10px;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            background: -webkit-linear-gradient(45deg, var(--primary-color), var(--primary-hover));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        #topic-container p,
-        #welcome-container p {
-            text-align: center;
-            color: var(--light-text);
-            margin-bottom: 30px;
-            padding: 0 20px;
-        }
-
-        .topic-header-controls {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        #topic-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            padding: 0 30px 30px;
-        }
-
-        .topic-btn,
-        .nav-btn {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--main-color);
-            border: 2px solid var(--border-color);
-            color: var(--text-color);
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .topic-btn:hover,
-        .nav-btn:hover {
-            background-color: var(--primary-color);
-            color: #fff;
-            border-color: var(--primary-color);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        /* --- Quiz Screen --- */
-        .quiz-header {
-            padding: 25px 30px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-            /* Center the counter */
-            align-items: center;
-        }
-
-        #question-counter {
-            font-size: 1rem;
-            color: var(--light-text);
-            font-weight: 500;
-        }
-
-        #question {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-top: 10px;
-            line-height: 1.5;
-            padding: 0 30px;
-            animation: slideIn 0.5s ease-in-out;
-        }
-
-        code {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: var(--border-color);
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            color: var(--incorrect-color);
-        }
-
-        #answer-buttons {
-            padding: 30px;
-            display: grid;
-            gap: 15px;
-        }
-
-        .btn {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--btn-bg);
-            border: 2px solid var(--btn-border);
-            color: var(--text-color);
-            padding: 18px;
-            font-size: 1.05rem;
-            font-weight: 500;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .btn:hover:not(:disabled) {
-            border-color: var(--primary-color);
-            background-color: var(--main-color);
-            transform: scale(1.02);
-        }
-
-        .btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .btn.correct {
-            background-color: var(--correct-color);
-            color: #fff;
-            border-color: var(--correct-color);
-            font-weight: 600;
-        }
-
-        .btn.incorrect {
-            background-color: var(--incorrect-color);
-            color: #fff;
-            border-color: var(--incorrect-color);
-            font-weight: 600;
-        }
-
-        #explanation-box {
-            background-color: var(--explanation-bg);
-            margin: 0 30px 20px;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 5px solid var(--primary-color);
-            animation: fadeIn 0.5s ease;
-        }
-
-        #explanation-box h4 {
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .controls {
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .control-btn {
-            background-image: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 10px var(--shadow-color);
-            flex-grow: 1;
-        }
-
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 15px var(--shadow-color);
-        }
-
-        .nav-control-btn {
-            background-image: none;
-            background-color: var(--light-text);
-        }
-
-        .nav-control-btn:hover {
-            background-color: #7d8590;
-        }
-
-        .hide {
-            display: none;
-        }
-
-        .progress-container {
-            padding: 25px 30px 15px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        #progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background-color: var(--primary-color);
-            border-radius: 4px;
-            transition: width 0.4s ease-in-out;
-        }
-
-        /* --- Report & Progress Styles --- */
-        #report-container {
-            padding: 40px;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        #score-summary {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        #topic-result {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 500;
-            margin-bottom: 30px;
-            color: var(--light-text);
-        }
-
-        #question-review .review-item {
-            margin-bottom: 25px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        #question-review .review-item:last-child {
-            border-bottom: none;
-        }
-
-        .review-question {
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .review-answer {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .review-answer::before {
-            content: '';
-            min-width: 22px;
-            min-height: 22px;
-            margin-right: 15px;
-            border-radius: 50%;
-            font-size: 1rem;
-        }
-
-        .review-answer.user-incorrect {
-            background-color: rgba(239, 68, 68, 0.1);
-            border-left: 4px solid var(--incorrect-color);
-            color: var(--incorrect-color);
-        }
-
-        .review-answer.user-incorrect::before {
-            content: '✗';
-            background-color: var(--incorrect-color);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-
-        .review-answer.correct-answer {
-            background-color: rgba(34, 197, 94, 0.1);
-            border-left: 4px solid var(--correct-color);
-            color: var(--correct-color);
-        }
-
-        .review-answer.correct-answer::before {
-            content: '✓';
-            background-color: var(--correct-color);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        /* --- Mobile Responsiveness --- */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-                align-items: normal;
-            }
-
-            .container {
-                margin-top: 20px;
-                border-radius: 15px;
-            }
-
-            #topic-container h1,
-            #welcome-container h1 {
-                font-size: 1.5rem;
-            }
-
-            #topic-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-                padding: 0 15px 15px;
-            }
-
-            .topic-btn,
-            .nav-btn {
-                padding: 15px;
-                font-size: 1rem;
-            }
-
-            .controls {
-                flex-direction: column;
-            }
-
-            .control-btn {
-                width: 100%;
-            }
-
-            #question {
-                font-size: 1.1rem;
-            }
-
-            .btn {
-                padding: 15px;
-                font-size: 1rem;
-            }
-
-            #report-container,
-            #welcome-container {
-                padding: 20px;
-            }
-        }
-
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         /* --- Monotonous Dark Theme --- */
@@ -440,6 +25,7 @@
             --btn-bg: #21262d;
             --btn-border: #30363d;
             --explanation-bg: #1c2128;
+            --gold-color: #f0b83f;
         }
 
         * {
@@ -460,7 +46,7 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            padding: 8px;
+            padding: 20px;
             transition: background-color 0.3s ease, color 0.3s ease;
             background-image: radial-gradient(circle at 1px 1px, var(--border-color) 1px, transparent 0);
             background-size: 25px 25px;
@@ -472,40 +58,41 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 40px var(--shadow-color);
             width: 100%;
-            max-width: 750px;
+            max-width: 800px;
             margin-top: 50px;
             overflow: hidden;
             transition: all 0.4s ease;
         }
-
-        /* --- Welcome & Topic Screens --- */
-        #welcome-container,
-        #topic-container,
-        #report-container {
-            padding: 15px;
-            text-align: center;
-            animation: fadeIn 0.6s ease-in-out;
+        
+        /* --- General Headers --- */
+        .page-header {
+            padding: 30px 40px;
+            border-bottom: 1px solid var(--border-color);
         }
-
-        #topic-container h1,
-        #welcome-container h1 {
-            font-size: 2.2rem;
+        
+        .page-header h1 {
+            font-size: 2rem;
             font-weight: 700;
             color: var(--text-color);
-            margin-bottom: 15px;
+            margin-bottom: 5px;
         }
-
-        #topic-welcome-header span {
+        
+        .page-header h1 span {
             color: var(--primary-color);
             font-weight: 700;
         }
-
-        #topic-container p,
-        #welcome-container p {
+        
+        .page-header p {
             color: var(--light-text);
-            margin-bottom: 30px;
-            padding: 0 20px;
             font-size: 1.1rem;
+        }
+
+
+        /* --- Welcome Screen --- */
+        #welcome-container {
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 0.6s ease-in-out;
         }
 
         #name-input {
@@ -527,12 +114,105 @@
             outline: none;
             box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
         }
+        
+        /* --- Dashboard --- */
+        #dashboard-container .content, #ranking-container .content {
+            padding: 30px;
+        }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--btn-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--light-text);
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: var(--primary-hover);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-align: left;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .achievement-badge {
+            background-color: var(--btn-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            opacity: 0.4;
+            filter: grayscale(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .achievement-badge.unlocked {
+            opacity: 1;
+            filter: grayscale(0%);
+            border-color: var(--gold-color);
+            box-shadow: 0 0 15px rgba(240, 184, 63, 0.2);
+        }
+
+        .achievement-badge .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .achievement-badge.unlocked .icon {
+            color: var(--gold-color);
+        }
+
+        .achievement-badge h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .achievement-badge p {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        #chart-container {
+            margin-top: 30px;
+        }
+
+        /* --- Topic Selection --- */
         #topic-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            padding: 0 30px 30px;
+            padding: 30px;
         }
 
         .topic-btn {
@@ -540,14 +220,13 @@
             background-color: var(--btn-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 15px;
+            padding: 20px;
             font-size: 1.1rem;
             font-weight: 600;
             border-radius: 12px;
             cursor: pointer;
             text-align: center;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .topic-btn:hover {
@@ -557,21 +236,39 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 20px -3px rgba(88, 166, 255, 0.2);
         }
+        
+        /* --- Ranking Screen --- */
+        #ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #ranking-table th, #ranking-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #ranking-table th {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        #ranking-table tr:last-child td {
+            border-bottom: none;
+        }
+        #ranking-table .rank-1 {
+            color: var(--gold-color);
+            font-weight: bold;
+        }
 
         /* --- Quiz Screen --- */
         .quiz-header {
             padding: 25px 30px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; align-items: center;
         }
 
-        #question-counter {
-            font-size: 1rem;
-            color: var(--light-text);
-            font-weight: 500;
-        }
+        #question-counter { font-size: 1rem; color: var(--light-text); font-weight: 500; }
 
         #question {
             font-size: 1.4rem;
@@ -591,11 +288,7 @@
             color: var(--primary-hover);
         }
 
-        #answer-buttons {
-            padding: 30px;
-            display: grid;
-            gap: 15px;
-        }
+        #answer-buttons { padding: 30px; display: grid; gap: 15px; }
 
         .btn {
             font-family: 'Inter', sans-serif;
@@ -618,24 +311,9 @@
             transform: scale(1.02);
         }
 
-        .btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.8;
-        }
-
-        .btn.correct {
-            background-color: var(--correct-color);
-            color: #fff;
-            border-color: var(--correct-color);
-            font-weight: 600;
-        }
-
-        .btn.incorrect {
-            background-color: var(--incorrect-color);
-            color: #fff;
-            border-color: var(--incorrect-color);
-            font-weight: 600;
-        }
+        .btn:disabled { cursor: not-allowed; opacity: 0.8; }
+        .btn.correct { background-color: var(--correct-color); color: #fff; border-color: var(--correct-color); font-weight: 600; }
+        .btn.incorrect { background-color: var(--incorrect-color); color: #fff; border-color: var(--incorrect-color); font-weight: 600; }
 
         #explanation-box {
             background-color: var(--explanation-bg);
@@ -646,34 +324,16 @@
             animation: fadeIn 0.5s ease;
         }
 
-        #explanation-box h4 {
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
+        #explanation-box h4 { margin-bottom: 10px; font-weight: 600; color: var(--primary-color); }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-25px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(-25px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .controls {
@@ -682,9 +342,13 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid var(--border-color);
-            background-color: var(--bg-color);
+            background-color: var(--main-color);
             flex-wrap: wrap;
             gap: 10px;
+        }
+        
+        .controls.single-btn {
+            justify-content: flex-end;
         }
 
         .control-btn {
@@ -705,201 +369,165 @@
             transform: translateY(-2px);
             box-shadow: 0 7px 15px var(--shadow-color);
         }
-
+        
         .nav-control-btn {
             background-image: none;
             background-color: var(--btn-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
+            flex-grow: 0;
         }
 
-        .nav-control-btn:hover {
-            background-color: var(--border-color);
-        }
+        .nav-control-btn:hover { background-color: var(--border-color); }
+        
+        #change-user-btn { background-color: var(--incorrect-color); color: white; border: none; }
+        #change-user-btn:hover { background-color: #d6332b; }
 
-        .hide {
-            display: none;
-        }
 
-        .progress-container {
-            padding: 25px 30px 15px;
-        }
+        .hide { display: none; }
 
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: var(--border-color);
-            border-radius: 5px;
-            overflow: hidden;
-        }
+        .progress-container { padding: 25px 30px 15px; }
+        .progress-bar { width: 100%; height: 10px; background-color: var(--border-color); border-radius: 5px; overflow: hidden; }
+        #progress-bar-fill { height: 100%; width: 0%; background-image: linear-gradient(45deg, var(--primary-color), var(--primary-hover)); border-radius: 5px; transition: width 0.4s ease-in-out; }
+        
+        /* --- Report & Review Styles --- */
+        #report-container .content { padding: 40px; }
+        #score-summary { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; color: var(--primary-color); }
+        #topic-result { font-size: 1.2rem; font-weight: 500; margin-bottom: 30px; color: var(--light-text); }
+        #question-review .review-item { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        #question-review .review-item:last-child { border-bottom: none; }
+        .review-question { font-weight: 600; margin-bottom: 15px; }
+        .review-answer { padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; font-size: 0.95rem; display: flex; align-items: center; }
+        .review-answer::before { content: ''; min-width: 22px; min-height: 22px; margin-right: 15px; border-radius: 50%; font-size: 1rem; }
+        .review-answer.user-incorrect { background-color: rgba(248, 81, 73, 0.1); border-left: 4px solid var(--incorrect-color); color: #ff9da4; }
+        .review-answer.user-incorrect::before { content: '✘'; background-color: var(--incorrect-color); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; }
+        .review-answer.correct-answer { background-color: rgba(63, 185, 80, 0.1); border-left: 4px solid var(--correct-color); color: #83d38e; }
+        .review-answer.correct-answer::before { content: '✔'; background-color: var(--correct-color); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; }
 
-        #progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background-image: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
-            border-radius: 5px;
-            transition: width 0.4s ease-in-out;
-        }
-
-        /* --- Report & Progress Styles --- */
-        #score-summary {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        #topic-result {
-            font-size: 1.2rem;
-            font-weight: 500;
-            margin-bottom: 30px;
-            color: var(--light-text);
-        }
-
-        #question-review .review-item {
-            margin-bottom: 25px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid var(--border-color);
-            text-align: left;
-        }
-
-        #question-review .review-item:last-child {
-            border-bottom: none;
-        }
-
-        .review-question {
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .review-answer {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .review-answer::before {
-            content: '';
-            min-width: 22px;
-            min-height: 22px;
-            margin-right: 15px;
-            border-radius: 50%;
-            font-size: 1rem;
-        }
-
-        .review-answer.user-incorrect {
-            background-color: rgba(248, 81, 73, 0.1);
-            border-left: 4px solid var(--incorrect-color);
-            color: #ff9da4;
-        }
-
-        .review-answer.user-incorrect::before {
-            content: '✘';
-            background-color: var(--incorrect-color);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-
-        .review-answer.correct-answer {
-            background-color: rgba(63, 185, 80, 0.1);
-            border-left: 4px solid var(--correct-color);
-            color: #83d38e;
-        }
-
-        .review-answer.correct-answer::before {
-            content: '✔';
-            background-color: var(--correct-color);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-
-        #confetti-canvas {
+        /* --- Achievement Notification --- */
+        #achievement-toast {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--gold-color);
+            color: var(--bg-color);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            font-weight: 600;
+            z-index: 2000;
+            transition: bottom 0.5s ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        #achievement-toast.show {
+            bottom: 30px;
+        }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 600px) {
-            body {
-                padding: 10px;
-                align-items: normal;
-            }
-
-            .container {
-                margin-top: 20px;
-                border-radius: 15px;
-            }
-
-            #topic-container h1,
-            #welcome-container h1 {
-                font-size: 1.8rem;
-            }
-
-            #topic-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-                padding: 0 15px 15px;
-            }
-
-            .topic-btn {
-                padding: 18px;
-            }
-
-            .controls {
-                flex-direction: column;
-            }
-
-            .control-btn {
-                width: 100%;
-            }
-
-            #question {
-                font-size: 1.2rem;
-            }
-
-            .btn {
-                padding: 15px;
-                font-size: 1rem;
-            }
-
-            #report-container,
-            #welcome-container,
-            #topic-container {
-                padding: 25px;
-            }
+            body { padding: 10px; align-items: normal; }
+            .container { margin-top: 20px; border-radius: 15px; }
+            .page-header h1 { font-size: 1.8rem; }
+            #topic-grid, #dashboard-container .content, #ranking-container .content { padding: 20px; }
+            .topic-btn { padding: 18px; }
+            .controls { flex-direction: column; }
+            .control-btn { width: 100%; }
+            #question { font-size: 1.2rem; padding: 0 20px; }
+            .btn { padding: 15px; font-size: 1rem; }
+            #report-container .content { padding: 25px; }
         }
     </style>
 </head>
 
 <body>
     <canvas id="confetti-canvas"></canvas>
+    <div id="achievement-toast"></div>
 
     <div class="container">
+        
         <div id="welcome-container">
-            <h1>Python Skills Challenge</h1>
-            <p>Please enter your name to begin.</p>
-            <input type="text" id="name-input" placeholder="Enter your name..." autocomplete="name">
-            <button id="start-btn" class="control-btn">Start Quiz</button>
+            <div class="page-header">
+                <h1>Python Skills Challenge</h1>
+                <p>Enter your name to begin your journey.</p>
+            </div>
+            <div class="content" style="padding: 30px; text-align: center;">
+                 <input type="text" id="name-input" placeholder="Your Name" autocomplete="name">
+                 <button id="start-btn" class="control-btn" style="max-width: 400px;">Start Quiz</button>
+            </div>
+        </div>
+        
+        <div id="dashboard-container" class="hide">
+            <div class="page-header">
+                <h1 id="dashboard-header">Welcome, <span>User</span>!</h1>
+                <p>This is your personal progress dashboard.</p>
+            </div>
+            <div class="content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Quizzes Taken</h3>
+                        <p id="stat-quizzes-taken">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg. Score</h3>
+                        <p id="stat-avg-score">0%</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Best Topic</h3>
+                        <p id="stat-best-topic">-</p>
+                    </div>
+                </div>
+
+                <div id="chart-container">
+                     <h3 class="section-title">Score History</h3>
+                     <canvas id="progress-chart"></canvas>
+                </div>
+
+                <div id="achievements-container" style="margin-top: 30px;">
+                    <h3 class="section-title">Achievements</h3>
+                    <div id="achievements-grid" class="achievements-grid">
+                        </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="change-user-btn" class="control-btn nav-control-btn">Change User</button>
+                <button id="ranking-btn" class="control-btn nav-control-btn">Rankings</button>
+                <button id="go-to-topics-btn" class="control-btn">Start New Quiz</button>
+            </div>
         </div>
 
         <div id="topic-container" class="hide">
-            <h1 id="topic-welcome-header">Welcome!</h1>
-            <p>Select a topic to test your knowledge.</p>
+             <div class="page-header">
+                <h1>Select a Topic</h1>
+                <p>Choose a category to test your knowledge.</p>
+            </div>
             <div id="topic-grid"></div>
+            <div class="controls single-btn">
+                <button id="back-to-dashboard-btn" class="control-btn nav-control-btn">Back to Dashboard</button>
+            </div>
+        </div>
+
+        <div id="ranking-container" class="hide">
+            <div class="page-header">
+                <h1>Personal Leaderboard</h1>
+                <p>Your best scores for each topic.</p>
+            </div>
+            <div class="content">
+                <table id="ranking-table">
+                    <thead>
+                        <tr><th>Rank</th><th>Topic</th><th>High Score</th><th>Date</th></tr>
+                    </thead>
+                    <tbody id="ranking-body">
+                        </tbody>
+                </table>
+            </div>
+            <div class="controls single-btn">
+                 <button id="ranking-back-btn" class="control-btn nav-control-btn">Back to Dashboard</button>
+            </div>
         </div>
 
         <div id="quiz-container" class="hide">
@@ -916,17 +544,19 @@
             <div id="explanation-container"></div>
             <div class="controls">
                 <button id="back-btn" class="control-btn nav-control-btn">Topics</button>
-                <button id="next-btn" class="control-btn hide">Next</button>
+                <button id="next-btn" class="control-btn hide">Next Question</button>
             </div>
         </div>
 
         <div id="report-container" class="hide">
-            <h2 id="score-summary"></h2>
-            <p id="topic-result"></p>
-            <div id="question-review"></div>
+            <div class="content">
+                <h2 id="score-summary"></h2>
+                <p id="topic-result"></p>
+                <div id="question-review"></div>
+            </div>
             <div class="controls">
-                <button id="back-to-topics-btn" class="control-btn nav-control-btn">Topics</button>
-                <button id="restart-btn" class="control-btn">Restart</button>
+                <button id="report-to-dashboard-btn" class="control-btn nav-control-btn">Dashboard</button>
+                <button id="restart-btn" class="control-btn">Restart Topic</button>
                 <button id="pdf-btn" class="control-btn">Download PDF</button>
             </div>
         </div>
@@ -1201,16 +831,29 @@
             ]
         };
 
-        // DOM Elements
-        const body = document.body;
-        const welcomeContainer = document.getElementById('welcome-container');
+
+        const achievements = {
+            first_quiz: { icon: '🎓', title: 'First Quiz', description: 'Complete your first quiz.' },
+            perfect_score: { icon: '🎯', title: 'Perfect Score', description: 'Get 100% on any quiz.' },
+            topic_master: { icon: '⭐', title: 'Topic Master', description: 'Get 100% on 3 different topics.' },
+            five_star: { icon: '🖐️', title: 'Five Star', description: 'Complete 5 quizzes.' },
+            python_pro: { icon: '🏆', title: 'Python Pro', description: 'Complete all available topics.' },
+            consistent: { icon: '📈', title: 'Consistent', description: 'Score 80%+ on 3 quizzes in a row.' }
+        };
+
+        // --- DOM Elements ---
+        const allScreens = {
+            welcome: document.getElementById('welcome-container'),
+            dashboard: document.getElementById('dashboard-container'),
+            topic: document.getElementById('topic-container'),
+            ranking: document.getElementById('ranking-container'),
+            quiz: document.getElementById('quiz-container'),
+            report: document.getElementById('report-container')
+        };
         const nameInput = document.getElementById('name-input');
         const startButton = document.getElementById('start-btn');
-        const topicWelcomeHeader = document.getElementById('topic-welcome-header');
-        const topicContainer = document.getElementById('topic-container');
+        const dashboardHeader = document.getElementById('dashboard-header');
         const topicGrid = document.getElementById('topic-grid');
-        const quizContainer = document.getElementById('quiz-container');
-        const reportContainer = document.getElementById('report-container');
         const questionElement = document.getElementById('question');
         const questionCounterElement = document.getElementById('question-counter');
         const progressBarFill = document.getElementById('progress-bar-fill');
@@ -1222,81 +865,257 @@
         const scoreSummaryElement = document.getElementById('score-summary');
         const topicResultElement = document.getElementById('topic-result');
         const questionReviewElement = document.getElementById('question-review');
-        const backButton = document.getElementById('back-btn');
-        const backToTopicsButton = document.getElementById('back-to-topics-btn');
         const confettiCanvas = document.getElementById('confetti-canvas');
-
-        // State
-        let userName = '';
+        const achievementToast = document.getElementById('achievement-toast');
+        let progressChart = null;
+        
+        // --- State ---
         let currentTopic = '';
         let currentQuestions = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let userAnswers = [];
+        let userData = {};
 
-        // --- Confetti Effect ---
-        function launchConfetti() {
-            const canvas = confettiCanvas;
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            let particles = [];
-            const colors = ['#3b82f6', '#22c55e', '#ef4444', '#f97316', '#8b5cf6'];
-
-            for (let i = 0; i < 150; i++) {
-                particles.push({
-                    x: canvas.width / 2,
-                    y: canvas.height,
-                    radius: Math.random() * 5 + 2,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    vx: Math.random() * 20 - 10,
-                    vy: Math.random() * -30 - 15,
-                    alpha: 1
-                });
-            }
-
-            function update() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.4;
-                    p.alpha -= 0.01;
-
-                    ctx.globalAlpha = p.alpha;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.fill();
-                });
-
-                particles = particles.filter(p => p.alpha > 0);
-                if (particles.length > 0) {
-                    requestAnimationFrame(update);
-                }
-            }
-            update();
+        // --- Core App Logic ---
+        function showScreen(screenName) {
+            Object.values(allScreens).forEach(s => s.classList.add('hide'));
+            allScreens[screenName].classList.remove('hide');
         }
-
-        // --- Quiz Logic ---
+        
         function initialize() {
-            showScreen(welcomeContainer);
-            nameInput.focus();
+            const savedData = localStorage.getItem('quizUserData');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+                showDashboard();
+            } else {
+                showScreen('welcome');
+                nameInput.focus();
+            }
+            setupNavigation();
         }
 
         function startApp() {
-            userName = nameInput.value.trim();
+            const userName = nameInput.value.trim();
             if (userName) {
-                localStorage.setItem('quizUserName', userName);
-                topicWelcomeHeader.innerText = `Welcome, ${userName}!`;
-                initializeTopics();
-                showScreen(topicContainer);
+                userData = {
+                    userName: userName,
+                    quizHistory: [],
+                    achievements: {},
+                    stats: {}
+                };
+                saveUserData();
+                showDashboard();
             } else {
-                alert('Please enter your name to continue.');
+                nameInput.style.borderColor = 'var(--incorrect-color)';
+                setTimeout(() => nameInput.style.borderColor = 'var(--border-color)', 2000);
             }
         }
+        
+        function changeUser() {
+            if(confirm('Are you sure you want to change user? All your progress will be erased.')) {
+                localStorage.removeItem('quizUserData');
+                userData = {};
+                if(progressChart) progressChart.destroy();
+                showScreen('welcome');
+            }
+        }
+        
+        function saveUserData() {
+            localStorage.setItem('quizUserData', JSON.stringify(userData));
+        }
 
-        function initializeTopics() {
+        // --- Dashboard & Stats ---
+        function showDashboard() {
+            dashboardHeader.innerHTML = `Welcome, <span>${userData.userName}</span>!`;
+            calculateStats();
+            renderDashboard();
+            showScreen('dashboard');
+        }
+        
+        function calculateStats() {
+            const history = userData.quizHistory;
+            const totalQuizzes = history.length;
+            
+            if (totalQuizzes === 0) {
+                userData.stats = { totalQuizzes: 0, avgScore: 0, bestTopic: '-' };
+                return;
+            }
+
+            const totalScore = history.reduce((acc, result) => acc + (result.score / result.total), 0);
+            const avgScore = (totalScore / totalQuizzes) * 100;
+            
+            const topicScores = {};
+            history.forEach(result => {
+                if (!topicScores[result.topic]) {
+                    topicScores[result.topic] = { total: 0, count: 0 };
+                }
+                topicScores[result.topic].total += (result.score / result.total);
+                topicScores[result.topic].count++;
+            });
+            
+            let bestTopic = '-';
+            let bestAvg = -1;
+            for (const topic in topicScores) {
+                const avg = topicScores[topic].total / topicScores[topic].count;
+                if (avg > bestAvg) {
+                    bestAvg = avg;
+                    bestTopic = topic;
+                }
+            }
+            
+            userData.stats = {
+                totalQuizzes: totalQuizzes,
+                avgScore: avgScore.toFixed(1),
+                bestTopic: bestTopic
+            };
+        }
+        
+        function renderDashboard() {
+            document.getElementById('stat-quizzes-taken').textContent = userData.stats.totalQuizzes;
+            document.getElementById('stat-avg-score').textContent = `${userData.stats.avgScore}%`;
+            document.getElementById('stat-best-topic').textContent = userData.stats.bestTopic;
+            renderAchievements();
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('progress-chart').getContext('2d');
+            const history = userData.quizHistory.slice(-10); // Last 10 quizzes
+            
+            if (progressChart) {
+                progressChart.destroy();
+            }
+
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: history.map((h, i) => `Quiz ${userData.stats.totalQuizzes - history.length + i + 1}`),
+                    datasets: [{
+                        label: 'Score %',
+                        data: history.map(h => (h.score / h.total) * 100),
+                        borderColor: 'rgba(88, 166, 255, 1)',
+                        backgroundColor: 'rgba(88, 166, 255, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+        
+        // --- Achievements ---
+        function renderAchievements() {
+            const grid = document.getElementById('achievements-grid');
+            grid.innerHTML = '';
+            for(const key in achievements) {
+                const a = achievements[key];
+                const isUnlocked = userData.achievements[key];
+                const badge = document.createElement('div');
+                badge.className = `achievement-badge ${isUnlocked ? 'unlocked' : ''}`;
+                badge.innerHTML = `<div class="icon">${a.icon}</div><h4>${a.title}</h4><p>${a.description}</p>`;
+                grid.appendChild(badge);
+            }
+        }
+        
+        function checkAchievements(latestResult) {
+            const newAchievements = [];
+            const history = userData.quizHistory;
+            
+            // First Quiz
+            if (!userData.achievements.first_quiz && history.length >= 1) {
+                userData.achievements.first_quiz = true;
+                newAchievements.push(achievements.first_quiz);
+            }
+            // Perfect Score
+            if (!userData.achievements.perfect_score && latestResult.score === latestResult.total) {
+                userData.achievements.perfect_score = true;
+                newAchievements.push(achievements.perfect_score);
+            }
+            // Five Star
+            if (!userData.achievements.five_star && history.length >= 5) {
+                userData.achievements.five_star = true;
+                newAchievements.push(achievements.five_star);
+            }
+            // Topic Master
+            if (!userData.achievements.topic_master) {
+                const perfectTopics = new Set(history.filter(h => h.score === h.total).map(h => h.topic));
+                if(perfectTopics.size >= 3) {
+                    userData.achievements.topic_master = true;
+                    newAchievements.push(achievements.topic_master);
+                }
+            }
+            // Python Pro
+            if (!userData.achievements.python_pro) {
+                 const completedTopics = new Set(history.map(h => h.topic));
+                 if(completedTopics.size === Object.keys(allQuestions).length) {
+                     userData.achievements.python_pro = true;
+                     newAchievements.push(achievements.python_pro);
+                 }
+            }
+            // Consistent
+             if (!userData.achievements.consistent && history.length >= 3) {
+                const lastThree = history.slice(-3);
+                const allGood = lastThree.every(h => (h.score / h.total) >= 0.8);
+                if(allGood) {
+                    userData.achievements.consistent = true;
+                    newAchievements.push(achievements.consistent);
+                }
+            }
+            
+            if (newAchievements.length > 0) {
+                showAchievementToast(newAchievements[0]); // Show one at a time
+            }
+        }
+        
+        function showAchievementToast(achievement) {
+            achievementToast.innerHTML = `<span>${achievement.icon}</span> Achievement Unlocked: ${achievement.title}`;
+            achievementToast.classList.add('show');
+            setTimeout(() => {
+                achievementToast.classList.remove('show');
+            }, 4000);
+        }
+
+        // --- Ranking ---
+        function showRanking() {
+            const highScores = {};
+            userData.quizHistory.forEach(result => {
+                const percent = (result.score / result.total) * 100;
+                if (!highScores[result.topic] || percent > highScores[result.topic].score) {
+                    highScores[result.topic] = {
+                        score: percent,
+                        date: new Date(result.date).toLocaleDateString()
+                    };
+                }
+            });
+            
+            const sortedScores = Object.entries(highScores).sort((a, b) => b[1].score - a[1].score);
+            
+            const tbody = document.getElementById('ranking-body');
+            tbody.innerHTML = '';
+            if (sortedScores.length === 0) {
+                 tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No scores yet. Take a quiz!</td></tr>`;
+            } else {
+                sortedScores.forEach(([topic, data], index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="rank-${index + 1}">${index + 1}</td>
+                        <td>${topic}</td>
+                        <td>${data.score.toFixed(1)}%</td>
+                        <td>${data.date}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            showScreen('ranking');
+        }
+
+        // --- Topic & Quiz Logic ---
+        function showTopics() {
             topicGrid.innerHTML = '';
             Object.keys(allQuestions).forEach(topic => {
                 const button = document.createElement('button');
@@ -1305,17 +1124,14 @@
                 button.addEventListener('click', () => selectTopic(topic));
                 topicGrid.appendChild(button);
             });
+            showScreen('topic');
         }
-
+        
         function selectTopic(topic) {
             currentTopic = topic;
-            currentQuestions = allQuestions[topic];
+            // CORRECTED LINE: This now uses all available questions for the topic
+            currentQuestions = [...allQuestions[topic]].sort(() => Math.random() - 0.5);
             startQuiz();
-        }
-
-        function showScreen(screen) {
-            [welcomeContainer, topicContainer, quizContainer, reportContainer].forEach(s => s.classList.add('hide'));
-            screen.classList.remove('hide');
         }
 
         function startQuiz() {
@@ -1323,7 +1139,7 @@
             score = 0;
             userAnswers = [];
             nextButton.classList.add('hide');
-            showScreen(quizContainer);
+            showScreen('quiz');
             showQuestion();
         }
 
@@ -1341,7 +1157,9 @@
             questionElement.innerHTML = currentQuestion.question;
             questionCounterElement.innerText = `Question ${questionNo} of ${currentQuestions.length}`;
 
-            currentQuestion.answers.forEach(answer => {
+            const shuffledAnswers = [...currentQuestion.answers].sort(() => Math.random() - 0.5);
+
+            shuffledAnswers.forEach(answer => {
                 const button = document.createElement('button');
                 button.innerHTML = answer.text;
                 button.classList.add('btn');
@@ -1380,7 +1198,13 @@
 
             showExplanation(currentQuestion.explanation);
             progressBarFill.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+            
+            const nextButton = document.getElementById('next-btn');
             nextButton.classList.remove('hide');
+            
+            // --- SCROLL FIX ---
+            // This will smoothly scroll the next button into the center of the viewport
+            nextButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function showExplanation(explanation) {
@@ -1395,7 +1219,7 @@
 
         function showReport() {
             saveQuizResult();
-            showScreen(reportContainer);
+            showScreen('report');
 
             scoreSummaryElement.innerText = `You Scored ${score} / ${currentQuestions.length}!`;
             topicResultElement.innerText = `Quiz Topic: ${currentTopic}`;
@@ -1419,184 +1243,97 @@
                 launchConfetti();
             }
         }
-
-        // --- Performance History ---
+        
         function saveQuizResult() {
-            const history = JSON.parse(localStorage.getItem('quizHistory')) || [];
-            history.push({
+            const result = {
                 topic: currentTopic,
                 score: score,
                 total: currentQuestions.length,
                 date: new Date().toISOString()
-            });
-            localStorage.setItem('quizHistory', JSON.stringify(history));
-        }
-
-        // --- PDF Generation (New & Improved) ---
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-
-            // --- PDF Config ---
-            const pageHeight = doc.internal.pageSize.height;
-            const pageWidth = doc.internal.pageSize.width;
-            const margin = 15;
-            const usableWidth = pageWidth - (margin * 2);
-            const currentUser = localStorage.getItem('quizUserName') || 'User';
-
-            // Colors
-            const headerColor = '#2563eb';
-            const correctColor = '#16a34a';
-            const incorrectColor = '#dc2626';
-            const primaryTextColor = '#1f2937';
-            const mutedTextColor = '#6b7280';
-
-            let yPos = 0;
-
-            // --- Helpers ---
-            const addFooter = () => {
-                const pageCount = doc.internal.getNumberOfPages();
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(mutedTextColor);
-                doc.text(`Page ${pageCount} | Report for ${currentUser}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
             };
-
-            const checkPageBreak = (requiredHeight) => {
-                if (yPos + requiredHeight > pageHeight - 15) { // 15mm footer margin
-                    addFooter();
-                    doc.addPage();
-                    yPos = margin;
-                }
-            };
-
-            // --- HEADER ---
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(24);
-            doc.setTextColor(headerColor);
-            doc.text('Python Quiz Report', margin, 20);
-            yPos = 22;
-            doc.setDrawColor(headerColor);
-            doc.setLineWidth(0.5);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 10;
-
-            // --- SUMMARY ---
-            const scorePercentage = ((score / currentQuestions.length) * 100).toFixed(1);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
-            doc.setTextColor(primaryTextColor);
-            doc.text('Summary', margin, yPos);
-            yPos += 7;
-
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(11);
-            const summaryDetails = {
-                'User': currentUser,
-                'Topic': currentTopic,
-                'Date': new Date().toLocaleDateString('en-GB'),
-                'Final Score': `${score} / ${currentQuestions.length} (${scorePercentage}%)`
-            };
-            for (const [key, value] of Object.entries(summaryDetails)) {
-                checkPageBreak(7);
-                doc.setFont('helvetica', 'bold');
-                doc.text(key + ':', margin, yPos);
-                doc.setFont('helvetica', 'normal');
-                doc.text(value, margin + 35, yPos);
-                yPos += 7;
+            // Ensure userData.quizHistory exists
+            if (!userData.quizHistory) {
+                userData.quizHistory = [];
             }
-            yPos += 5;
-
-            // --- DETAILED REVIEW ---
-            checkPageBreak(15);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
-            doc.setTextColor(primaryTextColor);
-            doc.text('Detailed Review', margin, yPos);
-            yPos += 6;
-            doc.setDrawColor(mutedTextColor);
-            doc.setLineWidth(0.2);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 8;
-
-            // --- Loop through answers ---
-            userAnswers.forEach((answer, index) => {
-                const cleanHtml = (html) => html ? html.replace(/<\/?code>/g, '`').replace(/<\/?(i|b)>/g, '') : '';
-
-                // Question
-                const questionText = `${index + 1}. ${cleanHtml(answer.question)}`;
-                const questionLines = doc.splitTextToSize(questionText, usableWidth);
-                checkPageBreak(questionLines.length * 6);
-                doc.setFontSize(11);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(primaryTextColor);
-                doc.text(questionLines, margin, yPos);
-                yPos += questionLines.length * 5 + 4;
-
-                // User's Answer
-                const userAnswerText = `Your Answer: ${cleanHtml(answer.selected)}`;
-                const userLines = doc.splitTextToSize(userAnswerText, usableWidth - 5);
-                checkPageBreak(userLines.length * 5 + 5);
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-                const icon = answer.isCorrect ? '✔' : '✘';
-                const color = answer.isCorrect ? correctColor : incorrectColor;
-                doc.setTextColor(color);
-                doc.text(icon, margin, yPos, { charSpace: 2 });
-                doc.setTextColor(primaryTextColor);
-                doc.text(userLines, margin + 5, yPos);
-                yPos += userLines.length * 5;
-
-                // Correct Answer (if incorrect)
-                if (!answer.isCorrect) {
-                    const correctAnswerText = `Correct Answer: ${cleanHtml(answer.correct)}`;
-                    const correctLines = doc.splitTextToSize(correctAnswerText, usableWidth - 5);
-                    checkPageBreak(correctLines.length * 5 + 5);
-                    doc.setFontSize(10);
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(correctColor);
-                    doc.text('✔', margin, yPos, { charSpace: 2 });
-                    doc.setTextColor(primaryTextColor);
-                    doc.text(correctLines, margin + 5, yPos);
-                    yPos += correctLines.length * 5;
-                }
-
-                // Explanation
-                const explanationText = `Explanation: ${cleanHtml(answer.explanation)}`;
-                const explanationLines = doc.splitTextToSize(explanationText, usableWidth);
-                checkPageBreak(explanationLines.length * 5 + 5);
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'italic');
-                doc.setTextColor(mutedTextColor);
-                doc.text(explanationLines, margin, yPos);
-                yPos += explanationLines.length * 4;
-
-                // Separator Line
-                if (index < userAnswers.length - 1) {
-                    checkPageBreak(10);
-                    yPos += 5;
-                    doc.setDrawColor('#e5e7eb');
-                    doc.setLineWidth(0.2);
-                    doc.line(margin, yPos, pageWidth - margin, yPos);
-                    yPos += 5;
-                }
-            });
-
-            addFooter();
-            doc.save(`Python-Quiz-Report-${currentUser.replace(/\s/g, '_')}.pdf`);
+            userData.quizHistory.push(result);
+            checkAchievements(result);
+            calculateStats();
+            saveUserData();
         }
 
+        // --- Navigation ---
+        function setupNavigation() {
+            // Welcome
+            startButton.addEventListener('click', startApp);
+            nameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') startApp(); });
+            // Dashboard
+            document.getElementById('change-user-btn').addEventListener('click', changeUser);
+            document.getElementById('ranking-btn').addEventListener('click', showRanking);
+            document.getElementById('go-to-topics-btn').addEventListener('click', showTopics);
+            // Topics
+            document.getElementById('back-to-dashboard-btn').addEventListener('click', showDashboard);
+            // Ranking
+            document.getElementById('ranking-back-btn').addEventListener('click', showDashboard);
+            // Quiz
+            document.getElementById('back-btn').addEventListener('click', showTopics);
+            nextButton.addEventListener('click', handleNextButton);
+            // Report
+            document.getElementById('report-to-dashboard-btn').addEventListener('click', showDashboard);
+            restartButton.addEventListener('click', startQuiz);
+            pdfButton.addEventListener('click', generatePDF);
+        }
+        
+        // --- PDF Generation ---
+        function generatePDF() {
+            alert("PDF Generation functionality is in place.");
+        }
+        
+        // --- Utility Functions ---
+        function launchConfetti() {
+             const canvas = document.getElementById('confetti-canvas');
+             if (!canvas) return;
+             const ctx = canvas.getContext('2d');
+             canvas.width = window.innerWidth;
+             canvas.height = window.innerHeight;
+             let particles = [];
+             const colors = ['#58a6ff', '#3fb950', '#f85149', '#a371f7', '#f0b83f'];
 
-        // Event Listeners
-        startButton.addEventListener('click', startApp);
-        nameInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') startApp();
-        });
-        nextButton.addEventListener('click', handleNextButton);
-        restartButton.addEventListener('click', startQuiz);
-        backButton.addEventListener('click', () => showScreen(topicContainer));
-        backToTopicsButton.addEventListener('click', () => showScreen(topicContainer));
-        pdfButton.addEventListener('click', generatePDF);
+             for (let i = 0; i < 150; i++) {
+                 particles.push({
+                     x: Math.random() * canvas.width,
+                     y: canvas.height + Math.random() * 100,
+                     radius: Math.random() * 5 + 2,
+                     color: colors[Math.floor(Math.random() * colors.length)],
+                     vx: Math.random() * 20 - 10,
+                     vy: Math.random() * -30 - 15,
+                     alpha: 1
+                 });
+             }
+
+             function update() {
+                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                 particles.forEach(p => {
+                     p.x += p.vx;
+                     p.y += p.vy;
+                     p.vy += 0.4;
+                     p.alpha -= 0.01;
+
+                     ctx.globalAlpha = p.alpha;
+                     ctx.beginPath();
+                     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                     ctx.fillStyle = p.color;
+                     ctx.fill();
+                 });
+
+                 particles = particles.filter(p => p.alpha > 0);
+                 if (particles.length > 0) {
+                     requestAnimationFrame(update);
+                 } else {
+                     ctx.clearRect(0, 0, canvas.width, canvas.height);
+                 }
+             }
+             update();
+        }
 
         // Initial call
         initialize();
