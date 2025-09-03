@@ -4,62 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basic Python Quiz</title>
+    <title>Advanced Python Quiz</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-        /* --- Dark Theme (Default) --- */
-        :root {
-            --bg-color: #111827;
-            --main-color: #1f2937;
-            --primary-color: #3b82f6;
-            --primary-hover: #60a5fa;
-            --text-color: #f9fafb;
-            --light-text: #9ca3af;
-            --correct-color: #4ade80;
-            --incorrect-color: #f87171;
-            --border-color: #374151;
-            --shadow-color: rgba(0, 0, 0, 0.2);
-            --btn-bg: #374151;
-            --btn-border: #4b5563;
-            --explanation-bg: #2b394f;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .container {
-            background-color: var(--main-color);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px var(--shadow-color);
-            width: 100%;
-            max-width: 750px;
-            margin-top: 50px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
 
         /* --- Welcome Screen --- */
         #welcome-container {
@@ -475,6 +423,412 @@
                 padding: 20px;
             }
         }
+      
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* --- Monotonous Dark Theme --- */
+        :root {
+            --bg-color: #0d1117;
+            --main-color: #161b22;
+            --primary-color: #58a6ff;
+            --primary-hover: #79c0ff;
+            --text-color: #c9d1d9;
+            --light-text: #8b949e;
+            --correct-color: #3fb950;
+            --incorrect-color: #f85149;
+            --border-color: #30363d;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --btn-bg: #21262d;
+            --btn-border: #30363d;
+            --explanation-bg: #1c2128;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-image: radial-gradient(circle at 1px 1px, var(--border-color) 1px, transparent 0);
+            background-size: 25px 25px;
+        }
+
+        .container {
+            background-color: var(--main-color);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px var(--shadow-color);
+            width: 100%;
+            max-width: 750px;
+            margin-top: 50px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        /* --- Welcome & Topic Screens --- */
+        #welcome-container, #topic-container, #report-container {
+            padding: 15px;
+            text-align: center;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        #topic-container h1,
+        #welcome-container h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+        
+        #topic-welcome-header span {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        #topic-container p,
+        #welcome-container p {
+            color: var(--light-text);
+            margin-bottom: 30px;
+            padding: 0 20px;
+            font-size: 1.1rem;
+        }
+
+        #name-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+            margin-bottom: 25px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        #name-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+        }
+
+        #topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 0 30px 30px;
+        }
+
+        .topic-btn {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--btn-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic-btn:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px -3px rgba(88, 166, 255, 0.2);
+        }
+        
+        /* --- Quiz Screen --- */
+        .quiz-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #question-counter {
+            font-size: 1rem;
+            color: var(--light-text);
+            font-weight: 500;
+        }
+
+        #question {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 20px 0;
+            line-height: 1.6;
+            padding: 0 30px;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        code {
+            font-family: 'SF Mono', 'Courier New', Courier, monospace;
+            background-color: var(--border-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            color: var(--primary-hover);
+        }
+
+        #answer-buttons {
+            padding: 30px;
+            display: grid;
+            gap: 15px;
+        }
+
+        .btn {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--btn-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 18px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: rgba(88, 166, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .btn.correct {
+            background-color: var(--correct-color);
+            color: #fff;
+            border-color: var(--correct-color);
+            font-weight: 600;
+        }
+
+        .btn.incorrect {
+            background-color: var(--incorrect-color);
+            color: #fff;
+            border-color: var(--incorrect-color);
+            font-weight: 600;
+        }
+
+        #explanation-box {
+            background-color: var(--explanation-bg);
+            margin: 0 30px 20px;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-color);
+            animation: fadeIn 0.5s ease;
+        }
+
+        #explanation-box h4 {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-25px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .controls {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background-image: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
+            color: #0d1117;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            flex-grow: 1;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px var(--shadow-color);
+        }
+        
+        .nav-control-btn {
+            background-image: none;
+            background-color: var(--btn-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .nav-control-btn:hover {
+            background-color: var(--border-color);
+        }
+
+        .hide { display: none; }
+
+        .progress-container {
+            padding: 25px 30px 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-image: linear-gradient(45deg, var(--primary-color), var(--primary-hover));
+            border-radius: 5px;
+            transition: width 0.4s ease-in-out;
+        }
+        
+        /* --- Report & Progress Styles --- */
+        #score-summary {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        #topic-result {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            color: var(--light-text);
+        }
+
+        #question-review .review-item {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        #question-review .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .review-answer {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .review-answer::before {
+            content: '';
+            min-width: 22px;
+            min-height: 22px;
+            margin-right: 15px;
+            border-radius: 50%;
+            font-size: 1rem;
+        }
+
+        .review-answer.user-incorrect {
+            background-color: rgba(248, 81, 73, 0.1);
+            border-left: 4px solid var(--incorrect-color);
+            color: #ff9da4;
+        }
+
+        .review-answer.user-incorrect::before {
+            content: '✘';
+            background-color: var(--incorrect-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .review-answer.correct-answer {
+            background-color: rgba(63, 185, 80, 0.1);
+            border-left: 4px solid var(--correct-color);
+            color: #83d38e;
+        }
+
+        .review-answer.correct-answer::before {
+            content: '✔';
+            background-color: var(--correct-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; align-items: normal; }
+            .container { margin-top: 20px; border-radius: 15px; }
+            #topic-container h1, #welcome-container h1 { font-size: 1.8rem; }
+            #topic-grid { grid-template-columns: 1fr; gap: 15px; padding: 0 15px 15px; }
+            .topic-btn { padding: 18px; }
+            .controls { flex-direction: column; }
+            .control-btn { width: 100%; }
+            #question { font-size: 1.2rem; }
+            .btn { padding: 15px; font-size: 1rem; }
+            #report-container, #welcome-container, #topic-container { padding: 25px; }
+        }
+   
     </style>
 </head>
 
@@ -702,6 +1056,31 @@
                 { question: "The `is not` operator checks for...", answers: [{ text: "Value inequality" }, { text: "Object identity inequality", correct: true }, { text: "Type mismatch" }, { text: "Membership exclusion" }], explanation: "`is not` is the inverse of `is`. It returns `True` if two variables do not point to the exact same object in memory." },
                 { question: "What is the result of `5 ^ 3` (Bitwise XOR)?", answers: [{ text: "`2`" }, { text: "`7`" }, { text: "`6`", correct: true }, { text: "`1`" }], explanation: "In binary, 5 is `101` and 3 is `011`. A bitwise XOR results in `110`, which is 6 in decimal." },
                 { question: "What is the output of `[1, 2] == [1, 2]` vs `[1, 2] is [1, 2]`", answers: [{ text: "Both are `True`" }, { text: "`True` and `False`", correct: true }, { text: "Both are `False`" }, { text: "`False` and `True`" }], explanation: "`==` checks if the values are equal, which they are. `is` checks if they are the same object. The two lists are separate objects in memory, so `is` returns `False`." }
+            ],
+            
+            "Tuples": [
+                { question: "How do you create a tuple with only one item?", answers: [{ text: "`(1)`" }, { text: "`[1,]`" }, { text: "`(1,)`", correct: true }, { text: "`tuple(1)`" }], explanation: "A single-item tuple must have a trailing comma to distinguish it from a mathematical expression in parentheses." },
+                { question: "What is the key characteristic of a tuple?", answers: [{ text: "They are mutable" }, { text: "They are immutable", correct: true }, { text: "They are unordered" }, { text: "They can only contain integers" }], explanation: "Tuples are immutable, meaning once they are created, their elements cannot be changed, added, or removed." },
+                { question: "Given `t = (1, 2, 3)`, what is the result of `t[1] = 4`?", answers: [{ text: "`(1, 4, 3)`" }, { text: "A `ValueError`" }, { text: "A `TypeError`", correct: true }, { text: "No change, no error" }], explanation: "Tuples do not support item assignment. Attempting to change an element will raise a `TypeError`." },
+                { question: "How do you access the last element of a tuple `my_tuple`?", answers: [{ text: "`my_tuple.last()`" }, { text: "`my_tuple[len(my_tuple)]`" }, { text: "`my_tuple[-1]`", correct: true }, { text: "`my_tuple[0]`" }], explanation: "Negative indexing works for tuples just like lists. `[-1]` refers to the last item." },
+                { question: "What is tuple unpacking?", answers: [{ text: "Converting a tuple to a list" }, { text: "Assigning tuple elements to multiple variables", correct: true }, { text: "Deleting a tuple" }, { text: "Finding the length of a tuple" }], explanation: "Unpacking allows you to assign the values inside a tuple to a sequence of variables in a single line, like `(a, b) = (1, 2)`." },
+                { question: "What does the `+` operator do with two tuples?", answers: [{ text: "Adds corresponding elements" }, { text: "Concatenates them into a new tuple", correct: true }, { text: "Finds the union" }, { text: "Raises a `TypeError`" }], explanation: "The `+` operator creates a new tuple containing all the elements of the first tuple followed by all the elements of the second." },
+                { question: "Which of the following can a tuple NOT be used for?", answers: [{ text: "A key in a dictionary" }, { text: "Returning multiple values from a function" }, { text: "Storing elements that need frequent modification", correct: true }, { text: "An element in a set" }], explanation: "Because tuples are immutable, they are unsuitable for collections of data that you need to change frequently. Lists are used for that purpose." },
+                { question: "What is the output of `len(('a', ('b', 'c')))`?", answers: [{ text: "`3`" }, { text: "`2`", correct: true }, { text: "`4`" }, { text: "An error" }], explanation: "`len()` counts the top-level elements. The tuple `('b', 'c')` is a single nested element, so the count is 2." },
+                { question: "Which method finds the number of occurrences of a value in a tuple?", answers: [{ text: "`.count()`", correct: true }, { text: "`.find()`" }, { text: "`.occurrences()`" }, { text: "`.search()`" }], explanation: "The `.count()` method returns the number of times a specified value appears in the tuple." },
+                { question: "Can a tuple contain a mutable object, like a list?", answers: [{ text: "No, it causes an error" }, { text: "Yes, but the list inside cannot be changed" }, { text: "Yes, and the list inside can be changed", correct: true }, { text: "Only if the list is empty" }], explanation: "A tuple can contain mutable objects. While you can't change which list the tuple points to, you can modify the contents of the list itself." }
+            ],
+            "Sets": [
+                { question: "How do you create an empty set?", answers: [{ text: "`{}`" }, { text: "`[]`" }, { text: "`set()`", correct: true }, { text: "`empty_set()`" }], explanation: "Using `{}` creates an empty dictionary. The correct way to create an empty set is with the `set()` constructor." },
+                { question: "What is the main characteristic of a set?", answers: [{ text: "It is ordered and mutable" }, { text: "It contains unique, unordered elements", correct: true }, { text: "It is immutable and ordered" }, { text: "It uses key-value pairs" }], explanation: "Sets are collections that are both unordered (they don't maintain insertion order) and only store unique elements (duplicates are automatically removed)." },
+                { question: "What is the output of `s = {1, 2, 2, 3}; print(s)`?", answers: [{ text: "`{1, 2, 2, 3}`" }, { text: "`{1, 2, 3}`", correct: true }, { text: "`{3, 2, 1}`" }, { text: "Output is not guaranteed" }], explanation: "Sets automatically discard duplicate values. The resulting set will contain only one `2`." },
+                { question: "Which method adds an element to a set?", answers: [{ text: "`.append()`" }, { text: "`.insert()`" }, { text: "`.add()`", correct: true }, { text: "`.push()`" }], explanation: "The `.add()` method is used to add a single element to a set. If the element is already present, the set remains unchanged." },
+                { question: "What is the difference between `.remove(x)` and `.discard(x)`?", answers: [{ text: "`.remove()` is faster" }, { text: "`.remove()` raises a `KeyError` if x is not present, `.discard()` does not", correct: true }, { text: "`.discard()` is faster" }, { text: "There is no difference" }], explanation: "Both remove an element, but `.remove()` will cause an error if the element doesn't exist, making `.discard()` a safer option when you're not sure if the element is in the set." },
+                { question: "Which operator performs a set union?", answers: [{ text: "`&` (ampersand)" }, { text: "`|` (pipe)", correct: true }, { text: "`+` (plus)" }, { text: "`^` (caret)" }], explanation: "The `|` operator or the `.union()` method returns a new set containing all items from both sets." },
+                { question: "What does the `&` operator do on two sets?", answers: [{ text: "Union" }, { text: "Difference" }, { text: "Symmetric Difference" }, { text: "Intersection", correct: true }], explanation: "The `&` operator or the `.intersection()` method returns a new set containing only the items that are present in both sets." },
+                { question: "Given `s1={1,2,3}` and `s2={3,4,5}`, what is `s1 - s2`?", answers: [{ text: "`{1, 2}`", correct: true }, { text: "`{4, 5}`" }, { text: "`{3}`" }, { text: "`{1, 2, 4, 5}`" }], explanation: "The `-` operator or `.difference()` method returns a new set with items that are in the first set but *not* in the second set." },
+                { question: "What does the `.pop()` method do on a set?", answers: [{ text: "Removes and returns the last element" }, { text: "Removes and returns an arbitrary element", correct: true }, { text: "Removes and returns the smallest element" }, { text: "Raises a `TypeError`" }], explanation: "Since sets are unordered, there is no 'last' or 'first' element. `.pop()` removes and returns an arbitrary element from the set, raising a `KeyError` if the set is empty." },
+                { question: "Can a list be an element of a set?", answers: [{ text: "Yes, always" }, { text: "No, because lists are mutable", correct: true }, { text: "Only if the list is empty" }, { text: "Only if it contains strings" }], explanation: "Set elements must be immutable. Since lists can be changed, they have no fixed hash value and cannot be added to a set." }
             ],
             "Error Handling": [
                 { question: "Which block is used to catch exceptions in Python?", answers: [{ text: "`catch`" }, { text: "`try`" }, { text: "`except`", correct: true }, { text: "`error`" }], explanation: "The `except` block follows a `try` block and contains the code that is executed if an error of the specified type occurs in the `try` block." },
