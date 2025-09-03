@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-
         /* --- Welcome Screen --- */
         #welcome-container {
             padding: 40px;
@@ -423,7 +422,7 @@
                 padding: 20px;
             }
         }
-      
+
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         /* --- Monotonous Dark Theme --- */
@@ -480,7 +479,9 @@
         }
 
         /* --- Welcome & Topic Screens --- */
-        #welcome-container, #topic-container, #report-container {
+        #welcome-container,
+        #topic-container,
+        #report-container {
             padding: 15px;
             text-align: center;
             animation: fadeIn 0.6s ease-in-out;
@@ -493,7 +494,7 @@
             color: var(--text-color);
             margin-bottom: 15px;
         }
-        
+
         #topic-welcome-header span {
             color: var(--primary-color);
             font-weight: 700;
@@ -556,7 +557,7 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 20px -3px rgba(88, 166, 255, 0.2);
         }
-        
+
         /* --- Quiz Screen --- */
         .quiz-header {
             padding: 25px 30px;
@@ -652,13 +653,27 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-25px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .controls {
@@ -690,7 +705,7 @@
             transform: translateY(-2px);
             box-shadow: 0 7px 15px var(--shadow-color);
         }
-        
+
         .nav-control-btn {
             background-image: none;
             background-color: var(--btn-bg);
@@ -702,7 +717,9 @@
             background-color: var(--border-color);
         }
 
-        .hide { display: none; }
+        .hide {
+            display: none;
+        }
 
         .progress-container {
             padding: 25px 30px 15px;
@@ -723,7 +740,7 @@
             border-radius: 5px;
             transition: width 0.4s ease-in-out;
         }
-        
+
         /* --- Report & Progress Styles --- */
         #score-summary {
             font-size: 2.8rem;
@@ -817,18 +834,54 @@
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 600px) {
-            body { padding: 10px; align-items: normal; }
-            .container { margin-top: 20px; border-radius: 15px; }
-            #topic-container h1, #welcome-container h1 { font-size: 1.8rem; }
-            #topic-grid { grid-template-columns: 1fr; gap: 15px; padding: 0 15px 15px; }
-            .topic-btn { padding: 18px; }
-            .controls { flex-direction: column; }
-            .control-btn { width: 100%; }
-            #question { font-size: 1.2rem; }
-            .btn { padding: 15px; font-size: 1rem; }
-            #report-container, #welcome-container, #topic-container { padding: 25px; }
+            body {
+                padding: 10px;
+                align-items: normal;
+            }
+
+            .container {
+                margin-top: 20px;
+                border-radius: 15px;
+            }
+
+            #topic-container h1,
+            #welcome-container h1 {
+                font-size: 1.8rem;
+            }
+
+            #topic-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 0 15px 15px;
+            }
+
+            .topic-btn {
+                padding: 18px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-btn {
+                width: 100%;
+            }
+
+            #question {
+                font-size: 1.2rem;
+            }
+
+            .btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+
+            #report-container,
+            #welcome-container,
+            #topic-container {
+                padding: 25px;
+            }
         }
-   
     </style>
 </head>
 
@@ -1057,30 +1110,50 @@
                 { question: "What is the result of `5 ^ 3` (Bitwise XOR)?", answers: [{ text: "`2`" }, { text: "`7`" }, { text: "`6`", correct: true }, { text: "`1`" }], explanation: "In binary, 5 is `101` and 3 is `011`. A bitwise XOR results in `110`, which is 6 in decimal." },
                 { question: "What is the output of `[1, 2] == [1, 2]` vs `[1, 2] is [1, 2]`", answers: [{ text: "Both are `True`" }, { text: "`True` and `False`", correct: true }, { text: "Both are `False`" }, { text: "`False` and `True`" }], explanation: "`==` checks if the values are equal, which they are. `is` checks if they are the same object. The two lists are separate objects in memory, so `is` returns `False`." }
             ],
-            
+
             "Tuples": [
-                { question: "How do you create a tuple with only one item?", answers: [{ text: "`(1)`" }, { text: "`[1,]`" }, { text: "`(1,)`", correct: true }, { text: "`tuple(1)`" }], explanation: "A single-item tuple must have a trailing comma to distinguish it from a mathematical expression in parentheses." },
-                { question: "What is the key characteristic of a tuple?", answers: [{ text: "They are mutable" }, { text: "They are immutable", correct: true }, { text: "They are unordered" }, { text: "They can only contain integers" }], explanation: "Tuples are immutable, meaning once they are created, their elements cannot be changed, added, or removed." },
-                { question: "Given `t = (1, 2, 3)`, what is the result of `t[1] = 4`?", answers: [{ text: "`(1, 4, 3)`" }, { text: "A `ValueError`" }, { text: "A `TypeError`", correct: true }, { text: "No change, no error" }], explanation: "Tuples do not support item assignment. Attempting to change an element will raise a `TypeError`." },
-                { question: "How do you access the last element of a tuple `my_tuple`?", answers: [{ text: "`my_tuple.last()`" }, { text: "`my_tuple[len(my_tuple)]`" }, { text: "`my_tuple[-1]`", correct: true }, { text: "`my_tuple[0]`" }], explanation: "Negative indexing works for tuples just like lists. `[-1]` refers to the last item." },
-                { question: "What is tuple unpacking?", answers: [{ text: "Converting a tuple to a list" }, { text: "Assigning tuple elements to multiple variables", correct: true }, { text: "Deleting a tuple" }, { text: "Finding the length of a tuple" }], explanation: "Unpacking allows you to assign the values inside a tuple to a sequence of variables in a single line, like `(a, b) = (1, 2)`." },
-                { question: "What does the `+` operator do with two tuples?", answers: [{ text: "Adds corresponding elements" }, { text: "Concatenates them into a new tuple", correct: true }, { text: "Finds the union" }, { text: "Raises a `TypeError`" }], explanation: "The `+` operator creates a new tuple containing all the elements of the first tuple followed by all the elements of the second." },
-                { question: "Which of the following can a tuple NOT be used for?", answers: [{ text: "A key in a dictionary" }, { text: "Returning multiple values from a function" }, { text: "Storing elements that need frequent modification", correct: true }, { text: "An element in a set" }], explanation: "Because tuples are immutable, they are unsuitable for collections of data that you need to change frequently. Lists are used for that purpose." },
-                { question: "What is the output of `len(('a', ('b', 'c')))`?", answers: [{ text: "`3`" }, { text: "`2`", correct: true }, { text: "`4`" }, { text: "An error" }], explanation: "`len()` counts the top-level elements. The tuple `('b', 'c')` is a single nested element, so the count is 2." },
-                { question: "Which method finds the number of occurrences of a value in a tuple?", answers: [{ text: "`.count()`", correct: true }, { text: "`.find()`" }, { text: "`.occurrences()`" }, { text: "`.search()`" }], explanation: "The `.count()` method returns the number of times a specified value appears in the tuple." },
-                { question: "Can a tuple contain a mutable object, like a list?", answers: [{ text: "No, it causes an error" }, { text: "Yes, but the list inside cannot be changed" }, { text: "Yes, and the list inside can be changed", correct: true }, { text: "Only if the list is empty" }], explanation: "A tuple can contain mutable objects. While you can't change which list the tuple points to, you can modify the contents of the list itself." }
+                { "question": "How do you create a tuple with only one item?", "answers": [{ "text": "`(1)`" }, { "text": "`[1,]`" }, { "text": "`(1,)`", "correct": true }, { "text": "`tuple(1)`" }], "explanation": "A single-item tuple must have a trailing comma to distinguish it from a mathematical expression in parentheses." },
+                { "question": "What is the key characteristic of a tuple?", "answers": [{ "text": "They are mutable" }, { "text": "They are immutable", "correct": true }, { "text": "They are unordered" }, { "text": "They can only contain integers" }], "explanation": "Tuples are immutable, meaning once they are created, their elements cannot be changed, added, or removed." },
+                { "question": "Given `t = (1, 2, 3)`, what is the result of `t[1] = 4`?", "answers": [{ "text": "`(1, 4, 3)`" }, { "text": "A `ValueError`" }, { "text": "A `TypeError`", "correct": true }, { "text": "No change, no error" }], "explanation": "Tuples do not support item assignment. Attempting to change an element will raise a `TypeError`." },
+                { "question": "How do you access the last element of a tuple `my_tuple`?", "answers": [{ "text": "`my_tuple.last()`" }, { "text": "`my_tuple[len(my_tuple)]`" }, { "text": "`my_tuple[-1]`", "correct": true }, { "text": "`my_tuple[0]`" }], "explanation": "Negative indexing works for tuples just like lists. `[-1]` refers to the last item." },
+                { "question": "What is tuple unpacking?", "answers": [{ "text": "Converting a tuple to a list" }, { "text": "Assigning tuple elements to multiple variables", "correct": true }, { "text": "Deleting a tuple" }, { "text": "Finding the length of a tuple" }], "explanation": "Unpacking allows you to assign the values inside a tuple to a sequence of variables in a single line, like `(a, b) = (1, 2)`." },
+                { "question": "What does the `+` operator do with two tuples?", "answers": [{ "text": "Adds corresponding elements" }, { "text": "Concatenates them into a new tuple", "correct": true }, { "text": "Finds the union" }, { "text": "Raises a `TypeError`" }], "explanation": "The `+` operator creates a new tuple containing all the elements of the first tuple followed by all the elements of the second." },
+                { "question": "Which of the following can a tuple NOT be used for?", "answers": [{ "text": "A key in a dictionary" }, { "text": "Returning multiple values from a function" }, { "text": "Storing elements that need frequent modification", "correct": true }, { "text": "An element in a set" }], "explanation": "Because tuples are immutable, they are unsuitable for collections of data that you need to change frequently. Lists are used for that purpose." },
+                { "question": "What is the output of `len(('a', ('b', 'c')))`?", "answers": [{ "text": "`3`" }, { "text": "`2`", "correct": true }, { "text": "`4`" }, { "text": "An error" }], "explanation": "`len()` counts the top-level elements. The tuple `('b', 'c')` is a single nested element, so the count is 2." },
+                { "question": "Which method finds the number of occurrences of a value in a tuple?", "answers": [{ "text": "`.count()`", "correct": true }, { "text": "`.find()`" }, { "text": "`.occurrences()`" }, { "text": "`.search()`" }], "explanation": "The `.count()` method returns the number of times a specified value appears in the tuple." },
+                { "question": "Can a tuple contain a mutable object, like a list?", "answers": [{ "text": "No, it causes an error" }, { "text": "Yes, but the list inside cannot be changed" }, { "text": "Yes, and the list inside can be changed", "correct": true }, { "text": "Only if the list is empty" }], "explanation": "A tuple can contain mutable objects. While you can't change which list the tuple points to, you can modify the contents of the list itself." },
+                { "question": "What is the output of `('x',) * 3`?", "answers": [{ "text": "`('xxx',)`" }, { "text": "`('x', 'x', 'x')`", "correct": true }, { "text": "`'xxx'`" }, { "text": "A `TypeError`" }], "explanation": "The `*` operator performs repetition, creating a new tuple with the elements repeated the specified number of times." },
+                { "question": "What does the `my_tuple.index('a')` method do?", "answers": [{ "text": "Returns `True` if 'a' exists" }, { "text": "Returns the index of the first occurrence of 'a'", "correct": true }, { "text": "Returns all indices of 'a'" }, { "text": "Returns `-1` if 'a' is not found" }], "explanation": "The `.index()` method returns the index of the first item that matches the value. It raises a `ValueError` if the item is not found." },
+                { "question": "Given `t = (10, 20, 30, 40, 50)`, what is `t[1:4]`?", "answers": [{ "text": "`(20, 30, 40)`", "correct": true }, { "text": "`(20, 30, 40, 50)`" }, { "text": "`(10, 20, 30)`" }, { "text": "`(30, 40, 50)`" }], "explanation": "Slicing a tuple works like slicing a list. It extracts elements from the start index up to (but not including) the end index." },
+                { "question": "Which of these functions can be used on a tuple?", "answers": [{ "text": "`.sort()`" }, { "text": "`.append()`" }, { "text": "`.reverse()`" }, { "text": "`sorted()`", "correct": true }], "explanation": "The built-in `sorted()` function can be used. It returns a new sorted *list* from the tuple's elements, without changing the original tuple." },
+                { "question": "What is the result of `(1, 2) == (2, 1)`?", "answers": [{ "text": "`True`" }, { "text": "`False`", "correct": true }, { "text": "A `SyntaxError`" }, { "text": "Sometimes `True`, sometimes `False`" }], "explanation": "Tuples are ordered collections. The `==` operator checks for equality, which requires the elements to be the same and in the same order." },
+                { "question": "How do you convert the list `['a', 'b']` into a tuple?", "answers": [{ "text": "`to_tuple(['a', 'b'])`" }, { "text": "`('a', 'b')`" }, { "text": "`tuple(['a', 'b'])`", "correct": true }, { "text": "You cannot convert a list to a tuple." }], "explanation": "The `tuple()` constructor function takes an iterable (like a list) as an argument and creates a new tuple from its elements." },
+                { "question": "Given `t = (1, [2, 3])`, what is the result of `t[1].append(4)`?", "answers": [{ "text": "A `TypeError` is raised" }, { "text": "The tuple `t` becomes `(1, [2, 3, 4])`", "correct": true }, { "text": "A new tuple is created" }, { "text": "The code does nothing" }], "explanation": "The tuple itself is immutable (you can't change `t[1]`), but the list object *inside* the tuple is mutable. Therefore, you can modify the list in-place." },
+                { "question": "Which is a primary advantage of tuples over lists?", "answers": [{ "text": "They are more flexible" }, { "text": "They are generally more memory-efficient and can be used as dictionary keys", "correct": true }, { "text": "They have more built-in methods" }, { "text": "They are easier to create" }], "explanation": "Due to their immutability, tuples have a fixed size and hash value, making them slightly more memory-efficient and allowing them to be used in places lists cannot, like dictionary keys." },
+                { "question": "How do you access the item `'c'` in the nested tuple `t = ('a', ('b', 'c'))`?", "answers": [{ "text": "`t[1][1]`", "correct": true }, { "text": "`t[2]`" }, { "text": "`t(1, 1)`" }, { "text": "`t[1, 1]`" }], "explanation": "You can chain index operators. `t[1]` accesses the inner tuple `('b', 'c')`, and `[1]` then accesses the second element of that inner tuple." },
+                { "question": "What does `max((1, 5, 2, 9))` return?", "answers": [{ "text": "`1`" }, { "text": "`5`" }, { "text": "`2`" }, { "text": "`9`", "correct": true }], "explanation": "The built-in `max()` function can be used on a tuple of comparable items (like numbers or strings) to find the largest element." }
             ],
             "Sets": [
-                { question: "How do you create an empty set?", answers: [{ text: "`{}`" }, { text: "`[]`" }, { text: "`set()`", correct: true }, { text: "`empty_set()`" }], explanation: "Using `{}` creates an empty dictionary. The correct way to create an empty set is with the `set()` constructor." },
-                { question: "What is the main characteristic of a set?", answers: [{ text: "It is ordered and mutable" }, { text: "It contains unique, unordered elements", correct: true }, { text: "It is immutable and ordered" }, { text: "It uses key-value pairs" }], explanation: "Sets are collections that are both unordered (they don't maintain insertion order) and only store unique elements (duplicates are automatically removed)." },
-                { question: "What is the output of `s = {1, 2, 2, 3}; print(s)`?", answers: [{ text: "`{1, 2, 2, 3}`" }, { text: "`{1, 2, 3}`", correct: true }, { text: "`{3, 2, 1}`" }, { text: "Output is not guaranteed" }], explanation: "Sets automatically discard duplicate values. The resulting set will contain only one `2`." },
-                { question: "Which method adds an element to a set?", answers: [{ text: "`.append()`" }, { text: "`.insert()`" }, { text: "`.add()`", correct: true }, { text: "`.push()`" }], explanation: "The `.add()` method is used to add a single element to a set. If the element is already present, the set remains unchanged." },
-                { question: "What is the difference between `.remove(x)` and `.discard(x)`?", answers: [{ text: "`.remove()` is faster" }, { text: "`.remove()` raises a `KeyError` if x is not present, `.discard()` does not", correct: true }, { text: "`.discard()` is faster" }, { text: "There is no difference" }], explanation: "Both remove an element, but `.remove()` will cause an error if the element doesn't exist, making `.discard()` a safer option when you're not sure if the element is in the set." },
-                { question: "Which operator performs a set union?", answers: [{ text: "`&` (ampersand)" }, { text: "`|` (pipe)", correct: true }, { text: "`+` (plus)" }, { text: "`^` (caret)" }], explanation: "The `|` operator or the `.union()` method returns a new set containing all items from both sets." },
-                { question: "What does the `&` operator do on two sets?", answers: [{ text: "Union" }, { text: "Difference" }, { text: "Symmetric Difference" }, { text: "Intersection", correct: true }], explanation: "The `&` operator or the `.intersection()` method returns a new set containing only the items that are present in both sets." },
-                { question: "Given `s1={1,2,3}` and `s2={3,4,5}`, what is `s1 - s2`?", answers: [{ text: "`{1, 2}`", correct: true }, { text: "`{4, 5}`" }, { text: "`{3}`" }, { text: "`{1, 2, 4, 5}`" }], explanation: "The `-` operator or `.difference()` method returns a new set with items that are in the first set but *not* in the second set." },
-                { question: "What does the `.pop()` method do on a set?", answers: [{ text: "Removes and returns the last element" }, { text: "Removes and returns an arbitrary element", correct: true }, { text: "Removes and returns the smallest element" }, { text: "Raises a `TypeError`" }], explanation: "Since sets are unordered, there is no 'last' or 'first' element. `.pop()` removes and returns an arbitrary element from the set, raising a `KeyError` if the set is empty." },
-                { question: "Can a list be an element of a set?", answers: [{ text: "Yes, always" }, { text: "No, because lists are mutable", correct: true }, { text: "Only if the list is empty" }, { text: "Only if it contains strings" }], explanation: "Set elements must be immutable. Since lists can be changed, they have no fixed hash value and cannot be added to a set." }
+                { "question": "How do you create an empty set?", "answers": [{ "text": "`{}`" }, { "text": "`[]`" }, { "text": "`set()`", "correct": true }, { "text": "`empty_set()`" }], "explanation": "Using `{}` creates an empty dictionary. The correct way to create an empty set is with the `set()` constructor." },
+                { "question": "What is the main characteristic of a set?", "answers": [{ "text": "It is ordered and mutable" }, { "text": "It contains unique, unordered elements", "correct": true }, { "text": "It is immutable and ordered" }, { "text": "It uses key-value pairs" }], "explanation": "Sets are collections that are both unordered and only store unique elements (duplicates are automatically removed)." },
+                { "question": "What is the output of `s = {1, 2, 2, 3}; print(s)`?", "answers": [{ "text": "`{1, 2, 2, 3}`" }, { "text": "`{1, 2, 3}`", "correct": true }, { "text": "`{3, 2, 1}`" }, { "text": "Output order is not guaranteed" }], "explanation": "Sets automatically discard duplicate values. The resulting set will contain only one `2`. The order is not guaranteed." },
+                { "question": "Which method adds an element to a set?", "answers": [{ "text": "`.append()`" }, { "text": "`.insert()`" }, { "text": "`.add()`", "correct": true }, { "text": "`.push()`" }], "explanation": "The `.add()` method is used to add a single element to a set. If the element is already present, the set remains unchanged." },
+                { "question": "What is the difference between `.remove(x)` and `.discard(x)`?", "answers": [{ "text": "`.remove()` is faster" }, { "text": "`.remove()` raises a `KeyError` if x is not present, `.discard()` does not", "correct": true }, { "text": "`.discard()` is faster" }, { "text": "There is no difference" }], "explanation": "Both remove an element, but `.remove()` will cause an error if the element doesn't exist, making `.discard()` a safer option when you're not sure if the element is in the set." },
+                { "question": "Which operator performs a set union?", "answers": [{ "text": "`&` (ampersand)" }, { "text": "`|` (pipe)", "correct": true }, { "text": "`+` (plus)" }, { "text": "`^` (caret)" }], "explanation": "The `|` operator or the `.union()` method returns a new set containing all items from both sets." },
+                { "question": "What does the `&` operator do on two sets?", "answers": [{ "text": "Union" }, { "text": "Difference" }, { "text": "Symmetric Difference" }, { "text": "Intersection", "correct": true }], "explanation": "The `&` operator or the `.intersection()` method returns a new set containing only the items that are present in both sets." },
+                { "question": "Given `s1={1,2,3}` and `s2={3,4,5}`, what is `s1 - s2`?", "answers": [{ "text": "`{1, 2}`", "correct": true }, { "text": "`{4, 5}`" }, { "text": "`{3}`" }, { "text": "`{1, 2, 4, 5}`" }], "explanation": "The `-` operator or `.difference()` method returns a new set with items that are in the first set but *not* in the second set." },
+                { "question": "What does the `.pop()` method do on a set?", "answers": [{ "text": "Removes and returns the last element" }, { "text": "Removes and returns an arbitrary element", "correct": true }, { "text": "Removes and returns the smallest element" }, { "text": "Raises a `TypeError`" }], "explanation": "Since sets are unordered, there is no 'last' or 'first' element. `.pop()` removes and returns an arbitrary element from the set, raising a `KeyError` if the set is empty." },
+                { "question": "Can a list be an element of a set?", "answers": [{ "text": "Yes, always" }, { "text": "No, because lists are mutable", "correct": true }, { "text": "Only if the list is empty" }, { "text": "Only if it contains strings" }], "explanation": "Set elements must be immutable. Since lists can be changed, they have no fixed hash value and cannot be added to a set." },
+                { "question": "What is the result of `set('banana')`?", "answers": [{ "text": "`{'b', 'a', 'n'}`", "correct": true }, { "text": "`{'b', 'a', 'n', 'a', 'n', 'a'}`" }, { "text": "`('b', 'a', 'n', 'a', 'n', 'a')`" }, { "text": "An error" }], "explanation": "The `set()` constructor iterates over the string and adds each character. Since sets only store unique elements, the result is a set of the unique letters." },
+                { "question": "Given `s1={1,2}` and `s2={2,3}`, what is `s1 ^ s2`?", "answers": [{ "text": "`{2}`" }, { "text": "`{1, 3}`", "correct": true }, { "text": "`{1, 2, 3}`" }, { "text": "`{}`" }], "explanation": "The `^` operator finds the symmetric difference: a new set with elements in either the first or second set, but not both." },
+                { "question": "How do you check if set `A` is a subset of set `B`?", "answers": [{ "text": "`A < B` or `A.issubset(B)`", "correct": true }, { "text": "`A in B`" }, { "text": "`subset(A, B)`" }, { "text": "`A.contains(B)`" }], "explanation": "The `<` or `<=` operators can check for proper subsets and subsets, respectively. The `.issubset()` method also performs this check." },
+                { "question": "What is a `frozenset`?", "answers": [{ "text": "A set that cannot be copied" }, { "text": "An immutable version of a set", "correct": true }, { "text": "A set that preserves insertion order" }, { "text": "A set that can only contain numbers" }], "explanation": "A `frozenset` is an immutable set. Once created, you cannot add or remove elements, which allows it to be used as a dictionary key or as an element in another set." },
+                { "question": "What does the `.update()` method do?", "answers": [{ "text": "Returns a new set with added elements" }, { "text": "Replaces all elements in the set" }, { "text": "Adds all elements from an iterable to the set in-place", "correct": true }, { "text": "It is not a valid set method" }], "explanation": "`.update()` modifies the set it's called on by adding all items from one or more iterables. It is an in-place version of the union operation." },
+                { "question": "What will `s = {1, 2}; s.clear()` result in?", "answers": [{ "text": "`s` becomes `None`" }, { "text": "`s` becomes `{}`" }, { "text": "`s` becomes `set()`", "correct": true }, { "text": "A `NameError` because `s` is deleted" }], "explanation": "The `.clear()` method removes all elements from a set, leaving it empty. Printing the empty set would show `set()`." },
+                { "question": "How do you check if two sets have no elements in common?", "answers": [{ "text": "By checking if their intersection is empty" }, { "text": "Using the `.isdisjoint()` method" }, { "text": "Using `s1.disjoint(s2)`" }, { "text": "Both A and B are correct", "correct": true }], "explanation": "The `.isdisjoint()` method is the most direct way. It returns `True` if the two sets have no intersection. Checking `len(s1 & s2) == 0` also works." },
+                { "question": "What does `s1.difference_update(s2)` do?", "answers": [{ "text": "Returns items in `s1` but not `s2`" }, { "text": "Removes all items from `s1` that are also in `s2`", "correct": true }, { "text": "Returns `True` if `s1` and `s2` are different" }, { "text": "Adds items from `s2` into `s1`" }], "explanation": "This is the in-place version of the difference operation. It modifies `s1` by removing any elements that are found in `s2`." },
+                { "question": "Can a tuple be an element of a set?", "answers": [{ "text": "No, never" }, { "text": "Yes, because tuples are immutable", "correct": true }, { "text": "Only if the tuple is empty" }, { "text": "Only if the tuple contains numbers" }], "explanation": "Yes. Since tuples are immutable, they have a hash value and can be added as elements to a set." },
+                { "question": "Which of these will result in a `TypeError`?", "answers": [{ "text": "`{[1, 2], [3, 4]}`", "correct": true }, { "text": "`{(1, 2), (3, 4)}`" }, { "text": "`{'a', 1, True}`" }, { "text": "`frozenset([1, 2])`" }], "explanation": "A set's elements must be immutable. Since lists are mutable, attempting to create a set containing lists will raise a `TypeError`." }
             ],
             "Error Handling": [
                 { question: "Which block is used to catch exceptions in Python?", answers: [{ text: "`catch`" }, { text: "`try`" }, { text: "`except`", correct: true }, { text: "`error`" }], explanation: "The `except` block follows a `try` block and contains the code that is executed if an error of the specified type occurs in the `try` block." },
